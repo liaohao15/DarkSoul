@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class PlayerInput : MonoBehaviour
 {
     //设置玩家的移动键
     //public string KeyUp = "W";
@@ -23,8 +23,8 @@ public class Player : MonoBehaviour
     public float TargetDup;
     public float TargetDturn;
 
-    public float DupVelocity;
-    public float DturnVelocity;
+    public float VelocityDup;
+    public float VelocityDturn;
 
     public bool InputEnable = true;
 
@@ -32,29 +32,26 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
-    private float GetDupVelocity()
-    {
-        return DupVelocity;
-    }
+
 
     // Update is called once per frame
     void Update()
     {
-        TargetDup = ((Input.GetKey(KeyCode.W)?1.0f:0) - (Input.GetKey(KeyCode.S) ? 1.0f : 0));
+        TargetDup = ((Input.GetKey(KeyCode.W) ? 1.0f : 0) - (Input.GetKey(KeyCode.S) ? 1.0f : 0));
         TargetDturn = ((Input.GetKey(KeyCode.A) ? 1.0f : 0) - (Input.GetKey(KeyCode.D) ? 1.0f : 0));
 
         if (InputEnable == false)//使用InputEnable开关来控制玩家的输入功能
         {
             TargetDturn = 0;
             TargetDup = 0;
-        
+
         }
 
-
-        Dup = Mathf.SmoothDamp(Dup, TargetDup, ref DupVelocity, 0.1f);
-        Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref DturnVelocity, 0.1f);//平滑输入是为了，更好的与动作动画搭配
+        //第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
+        Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
+        Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
     }
 }
