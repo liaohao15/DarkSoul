@@ -10,6 +10,9 @@ public class ActorController : MonoBehaviour
 
     [SerializeField]
     private Animator anim;
+    [SerializeField]
+    private Rigidbody rigid;
+    private Vector3 movingVt;
 
     //private void Awake()
     //{
@@ -25,6 +28,7 @@ public class ActorController : MonoBehaviour
     {
         anim = model.GetComponent<Animator>();
         pi = GetComponent<PlayerInput>();
+        rigid = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -35,7 +39,15 @@ public class ActorController : MonoBehaviour
         {
             model.transform.forward = pi.dV;//将角色面朝的方向，设为横坐标和竖坐标向量和
         }
-        
-    
+        movingVt = pi.dL * model.transform.forward;//角色最终要移动的向量
+
+
     }
+    private void FixedUpdate()
+    {
+        rigid.position +=  movingVt * Time.fixedDeltaTime;//让刚体移动
+    }
+
+
+
 }

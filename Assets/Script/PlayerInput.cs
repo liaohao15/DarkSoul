@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
+  
     //设置玩家的移动键
     //public string KeyUp = "W";
     //public string KeyDown = "S";
@@ -42,8 +43,8 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        TargetDup = ((Input.GetKey(KeyCode.W) ? 1.0f : 0) - (Input.GetKey(KeyCode.S) ? 1.0f : 0));
-        TargetDturn = ((Input.GetKey(KeyCode.D) ? 1.0f : 0) - (Input.GetKey(KeyCode.A) ? 1.0f : 0));
+        TargetDup = ((Input.GetKey(KeyUp) ? 1.0f : 0) - (Input.GetKey(KeyDown) ? 1.0f : 0));
+        TargetDturn = ((Input.GetKey(KeyRight) ? 1.0f : 0) - (Input.GetKey(KeyLeft) ? 1.0f : 0));
 
         if (InputEnable == false)//使用InputEnable开关来控制玩家的输入功能
         {
@@ -57,7 +58,7 @@ public class PlayerInput : MonoBehaviour
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
 
         dL = Mathf.Sqrt((Dup * Dup) + (Dturn * Dturn));
-        dV = Dup* transform.forward + Dturn * transform.right;
+        dV = Dup* Vector3.forward + Dturn * Vector3.right;
 
     }
 }
