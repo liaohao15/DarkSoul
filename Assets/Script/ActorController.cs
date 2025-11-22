@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -7,6 +8,7 @@ public class ActorController : MonoBehaviour
 {
     public GameObject model;
     public PlayerInput pi;
+    public  float movingSpeed = 2.0f; 
 
     [SerializeField]
     private Animator anim;
@@ -39,13 +41,22 @@ public class ActorController : MonoBehaviour
         {
             model.transform.forward = pi.dV;//将角色面朝的方向，设为横坐标和竖坐标向量和
         }
-        movingVt = pi.dL * model.transform.forward;//角色最终要移动的向量
+        movingVt = pi.dL * model.transform.forward * movingSpeed ;//角色最终要移动的向量
 
 
     }
     private void FixedUpdate()
     {
-        rigid.position +=  movingVt * Time.fixedDeltaTime;//让刚体移动
+        // rigid.position +=  movingVt * Time.fixedDeltaTime;//让刚体移动,但这种方法是直接改变刚体的位置的，有可能造成穿越地形的情况
+        //所以我们改为
+        //rigid.velocity = movingVt;//我们修改刚体的速度
+        //但是这样也不行，会制覆盖 Y 轴速度，导至角色下落慢一拍
+        rigid.velocity = new Vector3(movingVt.x, rigid.velocity.y, movingVt.z);
+
+
+
+
+
     }
 
 
