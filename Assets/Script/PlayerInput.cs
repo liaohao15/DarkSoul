@@ -5,19 +5,27 @@ using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
-  
+
     //设置玩家的移动键
     //public string KeyUp = "W";
     //public string KeyDown = "S";
     //public string KeyLift = "A";
     //public string KeyRight = "D";
     //这种写法是将按键变量名存为字符串，但是Input.GetKey()的参数，不能识别这类，得用KeyCode类型
+    [Header("===   key based    ===")]
     public KeyCode KeyUp = KeyCode.W;
     public KeyCode KeyDown = KeyCode.S;
     public KeyCode KeyLeft = KeyCode.A;
     public KeyCode KeyRight = KeyCode.D;
+
+    public KeyCode KeyA;
+    public KeyCode KeyB;
+    public KeyCode KeyC;
+    public KeyCode KeyD;
+ 
     //用正负值来决定上下左右键，其实就是将输入键转化为数值Image
 
+    [Header("===  key signal  ===")]
     public float Dup;
     public float Dturn;
 
@@ -27,7 +35,9 @@ public class PlayerInput : MonoBehaviour
     public float VelocityDup;
     public float VelocityDturn;
 
+    [Header("=== other  === ")]
     public bool InputEnable = true;
+    public bool run;//这里我们设置的按压信号
 
     public float dL;//(Direction Magnitude)方向模长
     public Vector3 dV;//(Direction Vector)方向向量
@@ -60,5 +70,6 @@ public class PlayerInput : MonoBehaviour
         dL = Mathf.Sqrt((Dup * Dup) + (Dturn * Dturn));
         dV = Dup* Vector3.forward + Dturn * Vector3.right;
 
+        run = Input.GetKey(KeyA);
     }
 }

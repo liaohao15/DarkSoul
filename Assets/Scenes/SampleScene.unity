@@ -327,6 +327,10 @@ MonoBehaviour:
   KeyDown: 115
   KeyLeft: 97
   KeyRight: 100
+  KeyA: 304
+  KeyB: 0
+  KeyC: 0
+  KeyD: 0
   Dup: 0
   Dturn: 0
   TargetDup: 0
@@ -334,6 +338,7 @@ MonoBehaviour:
   VelocityDup: 0
   VelocityDturn: 0
   InputEnable: 1
+  run: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
 --- !u!114 &643145862
@@ -744,7 +749,7 @@ Transform:
   m_GameObject: {fileID: 1446810388}
   serializedVersion: 2
   m_LocalRotation: {x: -0.19263281, y: -0, z: -0, w: 0.9812709}
-  m_LocalPosition: {x: 0.83, y: 0.44, z: 4.63}
+  m_LocalPosition: {x: 0.83, y: 0.65803444, z: 9.131661}
   m_LocalScale: {x: 7.5675826, y: 2.2905, z: 10.195349}
   m_ConstrainProportionsScale: 0
   m_Children: []
