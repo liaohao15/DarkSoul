@@ -15,7 +15,9 @@ public class ActorController : MonoBehaviour
     [SerializeField]
     private Rigidbody rigid;
     private Vector3 movingVt;
-    private float RunMultiplier = 2.0f;
+    private float RunMultiplier = 2.0f;//当跑步键按下时，乘以这个速度倍率
+    private Vector3 CharacterTurn;
+    private float RunTurn;
 
     //private void Awake()
     //{
@@ -37,10 +39,15 @@ public class ActorController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        anim.SetFloat("forward", pi.dL *((pi.run) ? 2.0f: 1.0f));//通过向量的模长的方法，将横坐标和竖坐标转换成模长
+        RunTurn = ((pi.run) ? 2.0f : 1.0f);
+        anim.SetFloat("forward", pi.dL * Mathf.Lerp(anim.GetFloat("forward"),RunTurn,0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
+
+
         if (pi.dL > 0.1f) //添加这个判断，是为了，避免当玩家没有输入时，他的TargetDug和TargetDturn的变为零，导致角色的面朝方向变为0,0
         {
-            model.transform.forward = pi.dV;//将角色面朝的方向，设为横坐标和竖坐标向量和
+
+            CharacterTurn = Vector3.Slerp(model.transform.forward, pi.dV, 0.3f);//Vector3.Slerp（ 球面插值）是用来做人物转向缓冲的
+            model.transform.forward = CharacterTurn;
         }
         movingVt = pi.dL * model.transform.forward * movingSpeed * ((pi.run)?RunMultiplier:1.0f);//角色最终要移动的向量
 
