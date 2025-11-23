@@ -26,22 +26,22 @@ public class PlayerInput : MonoBehaviour
     //用正负值来决定上下左右键，其实就是将输入键转化为数值Image
 
     [Header("===  key signal  ===")]
-    public float Dup;
-    public float Dturn;
+    public float Dup;//控制前后方向
+    public float Dturn;//控制左右方向
 
-    public float TargetDup;
-    public float TargetDturn;
+    public float TargetDup;//想要转向的前后方向
+    public float TargetDturn;//想要转向的左右方向
 
-    public float VelocityDup;
+    public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
     public float VelocityDturn;
 
-    public bool InputEnable = true;
+    public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
 
     //Pressing signal
     public bool run;
     //Trigger signal
-    public bool jump;
-    private  bool Lastjump;
+    public bool jump;//通过对jump的判断来触发触发器
+    private  bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
 
     [Header("=== other  === ")]
     public float dL;//(Direction Magnitude)方向模长
