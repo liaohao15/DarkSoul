@@ -40,8 +40,8 @@ public class PlayerInput : MonoBehaviour
     //Pressing signal
     public bool run;
     //Trigger signal
-    public bool jump ;
-    private  bool Lastjump ;
+    public bool jump;
+    private  bool Lastjump;
 
     [Header("=== other  === ")]
     public float dL;//(Direction Magnitude)方向模长
