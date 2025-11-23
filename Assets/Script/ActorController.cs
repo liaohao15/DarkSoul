@@ -75,7 +75,14 @@ public class ActorController : MonoBehaviour
 
 
     }
+                    // ==================      跳跃动作状态的显示     ============================
+    public void OnJumpEnter()
+    {
+        print("Jumping");
+    }
 
-
-
+    public void OnJumpExit()
+    {
+        print("Jump down");
+    }
 }

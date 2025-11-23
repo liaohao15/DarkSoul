@@ -90,7 +90,7 @@ public class PlayerInput : MonoBehaviour
         if (newJump != Lastjump && newJump == true)
         {
             jump = true;
-            print("Jump is Pressing");
+            //print("Jump is Pressing");
         }
         else
         { 
