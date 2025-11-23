@@ -67,9 +67,26 @@ public class PlayerInput : MonoBehaviour
         Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
 
-        dL = Mathf.Sqrt((Dup * Dup) + (Dturn * Dturn));
-        dV = Dup* Vector3.forward + Dturn * Vector3.right;
+        Vector2 TempVc = SqureToCircle(new Vector2(Dturn, Dup));
+        float Dturn2 = TempVc.x;
+        float Dup2 = TempVc.y;
+
+        dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色要走的模长
+        dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
 
         run = Input.GetKey(KeyA);
     }
+
+    public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
+    { 
+        Vector2 output = Vector2.zero;
+        output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
+        output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
+
+
+        return output;
+    }
+
+
+
 }
