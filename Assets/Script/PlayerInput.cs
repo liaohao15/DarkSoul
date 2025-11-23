@@ -35,10 +35,15 @@ public class PlayerInput : MonoBehaviour
     public float VelocityDup;
     public float VelocityDturn;
 
-    [Header("=== other  === ")]
     public bool InputEnable = true;
-    public bool run;//这里我们设置的按压信号
 
+    //Pressing signal
+    public bool run;
+    //Trigger signal
+    public bool jump ;
+    private  bool Lastjump ;
+
+    [Header("=== other  === ")]
     public float dL;//(Direction Magnitude)方向模长
     public Vector3 dV;//(Direction Vector)方向向量
 
@@ -53,6 +58,8 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        // =============            控制方向向量     ===============
         TargetDup = ((Input.GetKey(KeyUp) ? 1.0f : 0) - (Input.GetKey(KeyDown) ? 1.0f : 0));
         TargetDturn = ((Input.GetKey(KeyRight) ? 1.0f : 0) - (Input.GetKey(KeyLeft) ? 1.0f : 0));
 
@@ -63,27 +70,41 @@ public class PlayerInput : MonoBehaviour
 
         }
 
+        // ==============         使用平滑输入              ================
+
         //第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
         Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
 
+
+        //===================      将物体二维移动范围由正方形化为圆形    ================
         Vector2 TempVc = SqureToCircle(new Vector2(Dturn, Dup));
         float Dturn2 = TempVc.x;
         float Dup2 = TempVc.y;
 
         dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色要走的模长
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
-
         run = Input.GetKey(KeyA);
+
+        bool newJump = Input.GetKey(KeyB);
+        if (newJump != Lastjump && newJump == true)
+        {
+            jump = true;
+            print("Jump is Pressing");
+        }
+        else
+        { 
+            jump = false;
+        }
+        Lastjump = newJump;
     }
 
+    //   ============     将方形范围改为圆形范围的方法    ==============
     public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
     { 
         Vector2 output = Vector2.zero;
         output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
         output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
-
-
         return output;
     }
 

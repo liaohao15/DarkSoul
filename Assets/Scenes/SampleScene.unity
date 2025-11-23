@@ -328,7 +328,7 @@ MonoBehaviour:
   KeyLeft: 97
   KeyRight: 100
   KeyA: 304
-  KeyB: 0
+  KeyB: 107
   KeyC: 0
   KeyD: 0
   Dup: 0
@@ -337,6 +337,8 @@ MonoBehaviour:
   TargetDturn: 0
   VelocityDup: 0
   VelocityDturn: 0
+  jump: 0
+  Lastjump: 0
   InputEnable: 1
   run: 0
   dL: 0
