@@ -9,6 +9,8 @@ public class ActorController : MonoBehaviour
     public GameObject model;//抓取要控制的模型
     public PlayerInput pi;//调用PlayerInput脚本
     public  float movingSpeed = 2.0f; //基础速度
+    public Vector3 JumpImpulse;//向上跳跃的冲量
+    public float JunmpHight = 10.0f;//向上跳跃的高度
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -75,7 +77,8 @@ public class ActorController : MonoBehaviour
         //所以我们改为
         //rigid.velocity = planVc;//我们修改刚体的速度
         //但是这样也不行，会制覆盖 Y 轴速度，导至角色下落慢一拍
-        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z);
+        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse;
+        JumpImpulse = Vector3.zero;
 
     }
                     // ==================      跳跃动作状态的显示     ============================
@@ -83,6 +86,8 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = false;
         PlanLock = true;
+        JumpImpulse = new Vector3 (0,JunmpHight,0);
+        print("YES");
     }
 
     public void OnJumpExit()
