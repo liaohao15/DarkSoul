@@ -81,7 +81,11 @@ public class ActorController : MonoBehaviour
         JumpImpulse = Vector3.zero;
 
     }
-                    // ==================      跳跃动作状态的显示     ============================
+
+
+
+    //                          ******************************  信息接收区    *************************************
+    //                              ==================      跳跃动作状态的显示     ============================
     public void OnJumpEnter()
     {
         pi.InputEnable = false;
@@ -95,4 +99,21 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = true;
         PlanLock = false;
     }
+
+
+    //                           ==================      人物下落检测区    ============================
+    public void Ingroud()
+    {
+        print("is groud");
+        anim.SetBool("isgroud", true);
+    }
+
+    public void NotIngroud()
+    {
+        print("not is groud");
+        anim.SetBool("isgroud", false);
+    }
+
+
+
 }

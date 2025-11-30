@@ -38,10 +38,14 @@ public class GroundSensor : MonoBehaviour
         Collider[] outcolliders = Physics.OverlapCapsule(poinT1, poinT2, radius, LayerMask.GetMask("Ground"));
         if (outcolliders.Length != 0)
         {
-            foreach (var col in outcolliders)
-            {
-                print("" + col.name);
-            }
+           
+               // SendMessage("Inground");只往子类或本身发
+           
+            SendMessageUpwards("Ingroud");//往父类发送信息
+        }
+        else 
+        {
+            SendMessageUpwards("NotIngroud");
         }
 
     }
