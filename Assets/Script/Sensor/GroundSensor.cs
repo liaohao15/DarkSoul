@@ -24,10 +24,18 @@ public class GroundSensor : MonoBehaviour
 
     void FixedUpdate()
     {
-        poinT1 = transform.position + transform.up * radius;
-        poinT2 = transform.position + transform.up * cpC.height - transform.up * radius;
-        LayerMask layerMask1 = LayerMask.GetMask("Ground");
-        Collider[] outcolliders = Physics.OverlapCapsule(poinT1, poinT2, radius, layerMask1);
+        //poinT1 = transform.position + transform.up * radius;
+        //poinT2 = transform.position + transform.up * cpC.height - transform.up * radius;
+        //Vector3 realCenter = cpC.center;这个是胶囊相对于物体的中心位置
+        Vector3 realCenter = transform.TransformPoint(cpC.center);
+        poinT1 = realCenter - transform.up * (cpC.height - radius);
+        poinT2 = poinT1 - transform.up * 0.2f;
+
+
+
+
+        //LayerMask layerMask1 = LayerMask.GetMask("Ground");
+        Collider[] outcolliders = Physics.OverlapCapsule(poinT1, poinT2, radius, LayerMask.GetMask("Ground"));
         if (outcolliders.Length != 0)
         {
             foreach (var col in outcolliders)
