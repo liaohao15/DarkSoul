@@ -8,9 +8,9 @@ public class ActorController : MonoBehaviour
 {
     public GameObject model;//抓取要控制的模型
     public PlayerInput pi;//调用PlayerInput脚本
-    public  float movingSpeed = 3.0f; //基础速度
+    public  float movingSpeed = 2.0f; //基础速度
     public Vector3 JumpImpulse;//向上跳跃的冲量
-    public float JunmpHight = 8.0f;//向上跳跃的高度
+    public float JunmpHight = 4.5f;//向上跳跃的高度
     public float fallSpeed = 7.0f;//下落速度
     public bool isFall = false;//标记是否下落
     private bool isGround = true;//标记是否在地面
@@ -36,6 +36,8 @@ public class ActorController : MonoBehaviour
         anim = model.GetComponent<Animator>();
         pi = GetComponent<PlayerInput>();
         rigid = GetComponent<Rigidbody>();
+
+
     }
 
     // Update is called once per frame
@@ -68,15 +70,22 @@ public class ActorController : MonoBehaviour
         }
 
         //3.下落
-        
         if (!isGround && rigid.velocity.y < 0)
         {
             isFall = true;
             if (isFall)
             {
-                anim.SetTrigger("isfall");
+                anim.SetBool("isfall",isFall);
             }
         }
+
+        //4.落地翻滚在Ingroud里面
+        //4.下落翻滚
+        if (rigid.velocity.magnitude > 9.0f && isGround)
+        {
+            anim.SetTrigger("roll");
+        }
+
 
     }
     private void FixedUpdate()
@@ -85,11 +94,7 @@ public class ActorController : MonoBehaviour
         rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse;
         //2.跳跃
         JumpImpulse = Vector3.zero;
-        //3.下落
-        if (isFall && rigid.velocity.y > -fallSpeed)
-        {
-            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
-        }
+        
 
     }
    
@@ -122,6 +127,13 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = true;
         PlanLock = false;
         anim.SetBool("isfall", false);
+
+        //3.下落
+        if (isFall && rigid.velocity.y > -fallSpeed)
+        {
+            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
+        }
+      
     }
 
     public void NotIngroud()

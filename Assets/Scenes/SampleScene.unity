@@ -406,9 +406,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: {fileID: 643145857}
   pi: {fileID: 0}
-  movingSpeed: 1.5
+  movingSpeed: 2
   JumpImpulse: {x: 0, y: 0, z: 0}
-  JunmpHight: 5
+  JunmpHight: 4.5
   fallSpeed: 7
   isFall: 0
   anim: {fileID: 0}
