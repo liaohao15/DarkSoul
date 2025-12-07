@@ -15,7 +15,7 @@ public class FSMCLearSignals : StateMachineBehaviour
     {
         foreach (var signal in clearEnterSignals)
         {
-            animator.ResetTrigger("jump");
+            animator.ResetTrigger(signal);//清空
         }
     }
 
@@ -32,7 +32,7 @@ public class FSMCLearSignals : StateMachineBehaviour
     {
         foreach (var signal in clearExitSignals)//foreach循环把数组里的每一个信号，逐个拿出来进行清空
         {
-            animator.ResetTrigger("jump");
+            animator.ResetTrigger(signal);
         }
     }
 

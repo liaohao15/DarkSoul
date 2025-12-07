@@ -8,9 +8,12 @@ public class ActorController : MonoBehaviour
 {
     public GameObject model;//抓取要控制的模型
     public PlayerInput pi;//调用PlayerInput脚本
-    public  float movingSpeed = 2.0f; //基础速度
+    public  float movingSpeed = 3.0f; //基础速度
     public Vector3 JumpImpulse;//向上跳跃的冲量
-    public float JunmpHight = 10.0f;//向上跳跃的高度
+    public float JunmpHight = 8.0f;//向上跳跃的高度
+    public float fallSpeed = 7.0f;//下落速度
+    public bool isFall = false;//标记是否下落
+    private bool isGround = true;//标记是否在地面
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -24,13 +27,6 @@ public class ActorController : MonoBehaviour
     private float RunTurn;//为动画切换而设计的变量
 
     private bool PlanLock;
-
-    //private void Awake()
-    //{
-    //    anim = model.GetComponent<Animator>();
-    //    pi = GetComponent<PlayerInput>();   
-   
-    //}
 
 
 
@@ -62,6 +58,7 @@ public class ActorController : MonoBehaviour
         if (PlanLock == false) 
         {
             planVc = pi.dL * model.transform.forward * movingSpeed * ((pi.run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
+            
         }
 
         //2.跳跃
@@ -70,17 +67,33 @@ public class ActorController : MonoBehaviour
             anim.SetTrigger("jump");
         }
 
+        //3.下落
+        
+        if (!isGround && rigid.velocity.y < 0)
+        {
+            isFall = true;
+            if (isFall)
+            {
+                anim.SetTrigger("isfall");
+            }
+        }
+
     }
     private void FixedUpdate()
     {
-        // rigid.position +=  planVc * Time.fixedDeltaTime;//让刚体移动,但这种方法是直接改变刚体的位置的，有可能造成穿越地形的情况
-        //所以我们改为
-        //rigid.velocity = planVc;//我们修改刚体的速度
-        //但是这样也不行，会制覆盖 Y 轴速度，导至角色下落慢一拍
+        //1.移动
         rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse;
+        //2.跳跃
         JumpImpulse = Vector3.zero;
+        //3.下落
+        if (isFall && rigid.velocity.y > -fallSpeed)
+        {
+            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
+        }
 
     }
+   
+    
 
 
 
@@ -94,23 +107,27 @@ public class ActorController : MonoBehaviour
         print("YES");
     }
 
+    //可能要删调这个了
     public void OnJumpExit()
-    {
-        pi.InputEnable = true;
-        PlanLock = false;
-    }
+    { }
 
 
     //                           ==================      人物下落检测区    ============================
     public void Ingroud()
     {
         print("is groud");
+        isGround = true;
         anim.SetBool("isgroud", true);
+
+        pi.InputEnable = true;
+        PlanLock = false;
+        anim.SetBool("isfall", false);
     }
 
     public void NotIngroud()
     {
         print("not is groud");
+        isGround = false;
         anim.SetBool("isgroud", false);
     }
 
