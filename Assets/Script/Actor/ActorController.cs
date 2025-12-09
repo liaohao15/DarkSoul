@@ -14,6 +14,8 @@ public class ActorController : MonoBehaviour
     public float fallSpeed = 7.0f;//下落速度
     public bool isFall = false;//标记是否下落
     private bool isGround = true;//标记是否在地面
+    public Vector3 RollImpulse;//向上翻滚的冲量
+    public float RollHight = 1.5f;//向上翻滚的高度
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -81,7 +83,7 @@ public class ActorController : MonoBehaviour
 
         //4.落地翻滚在Ingroud里面
         //4.下落翻滚
-        if (rigid.velocity.magnitude > 9.0f && isGround)
+        if (rigid.velocity.magnitude > 4.6f && isGround)
         {
             anim.SetTrigger("roll");
         }
@@ -142,7 +144,12 @@ public class ActorController : MonoBehaviour
         isGround = false;
         anim.SetBool("isgroud", false);
     }
-
-
+    //                              ==================      翻滚动作状态的显示     ============================
+    public void OnEnterRoll()
+    {
+        pi.InputEnable = false;
+        PlanLock = true;
+        JumpImpulse = new Vector3(0, RollHight, 0);
+    }
 
 }

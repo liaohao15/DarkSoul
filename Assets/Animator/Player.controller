@@ -67,6 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   clearEnterSignals:
   - jump
+  - roll
   clearExitSignals:
   - jump
 --- !u!1102 &-6559151025091526335
@@ -81,7 +82,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 4105592716113790519}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 7201227316763314959}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -171,7 +173,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1847757336860623747}
-    m_Position: {x: 280, y: 110, z: 0}
+    m_Position: {x: 280, y: 120, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6380020717537668329}
     m_Position: {x: 280, y: 30, z: 0}
@@ -331,7 +333,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: 06ecddf80773d7047b67421c49f71b44, type: 3}
     m_Threshold: 1
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 1.2
     m_CycleOffset: 0
     m_DirectBlendParameter: Blend
     m_Mirror: 0
@@ -430,6 +432,19 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &7201227316763314959
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7c9559aaa44482478ea83fc15281b40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnEnterRollMessages: []
 --- !u!1101 &9005759137776980461
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
