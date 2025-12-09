@@ -411,8 +411,9 @@ MonoBehaviour:
   JunmpHight: 4.5
   fallSpeed: 7
   isFall: 0
-  RollImpulse: {x: 0, y: 0, z: 0}
   RollHight: 1.5
+  JabImpulse: {x: 0, y: 0, z: 0}
+  JabHight: 4.5
   anim: {fileID: 0}
   rigid: {fileID: 0}
 --- !u!1 &705507993

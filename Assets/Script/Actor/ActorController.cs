@@ -14,8 +14,9 @@ public class ActorController : MonoBehaviour
     public float fallSpeed = 7.0f;//下落速度
     public bool isFall = false;//标记是否下落
     private bool isGround = true;//标记是否在地面
-    public Vector3 RollImpulse;//向上翻滚的冲量
     public float RollHight = 1.5f;//向上翻滚的高度
+    public Vector3 JabImpulse;//后跳的冲量
+    public float JabHight = 10.0f;//后跳的高度
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -93,10 +94,10 @@ public class ActorController : MonoBehaviour
     private void FixedUpdate()
     {
         //1.移动
-        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse;
+        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse + JabImpulse;
         //2.跳跃
         JumpImpulse = Vector3.zero;
-        
+        JabImpulse = Vector3.zero;
 
     }
    
@@ -110,8 +111,7 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = false;
         PlanLock = true;
-        JumpImpulse = new Vector3 (0,JunmpHight,0);
-        print("YES");
+        JumpImpulse = model.transform.forward;
     }
 
     //可能要删调这个了
@@ -145,11 +145,18 @@ public class ActorController : MonoBehaviour
         anim.SetBool("isgroud", false);
     }
     //                              ==================      翻滚动作状态的显示     ============================
-    public void OnEnterRoll()
+    public void OnRollEnter()
     {
         pi.InputEnable = false;
         PlanLock = true;
         JumpImpulse = new Vector3(0, RollHight, 0);
     }
 
+    //                              ==================      后跳动作状态的显示     ============================
+    public void OnJabEnter()
+    {
+        pi.InputEnable = false;
+        PlanLock = true;
+        JabImpulse = model.transform.forward * (-1) * JabHight;
+    }
 }
