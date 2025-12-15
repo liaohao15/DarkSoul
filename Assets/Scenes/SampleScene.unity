@@ -408,12 +408,12 @@ MonoBehaviour:
   pi: {fileID: 0}
   movingSpeed: 2
   JumpImpulse: {x: 0, y: 0, z: 0}
-  JunmpHight: 4.5
-  fallSpeed: 7
+  JunmpHight: 3
+  fallSpeed: 1
   isFall: 0
   RollHight: 1.5
   JabImpulse: {x: 0, y: 0, z: 0}
-  JabHight: 4.5
+  JabHight: 10
   anim: {fileID: 0}
   rigid: {fileID: 0}
 --- !u!1 &705507993

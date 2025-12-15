@@ -26,11 +26,11 @@ public class PlayerInput : MonoBehaviour
     //用正负值来决定上下左右键，其实就是将输入键转化为数值Image
 
     [Header("===  key signal  ===")]
-    public float Dup;//控制前后方向
-    public float Dturn;//控制左右方向
+    public float Dup;//当前前后输入值
+    public float Dturn;//当前左右输入值
 
-    public float TargetDup;//想要转向的前后方向
-    public float TargetDturn;//想要转向的左右方向
+    public float TargetDup;//目标前后输入值
+    public float TargetDturn;//目标左右输入值
 
     public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
     public float VelocityDturn;
@@ -60,6 +60,7 @@ public class PlayerInput : MonoBehaviour
     {
 
         // =============            控制方向向量     ===============
+        //把按键转化为目标值
         TargetDup = ((Input.GetKey(KeyUp) ? 1.0f : 0) - (Input.GetKey(KeyDown) ? 1.0f : 0));
         TargetDturn = ((Input.GetKey(KeyRight) ? 1.0f : 0) - (Input.GetKey(KeyLeft) ? 1.0f : 0));
 
@@ -72,17 +73,17 @@ public class PlayerInput : MonoBehaviour
 
         // ==============         使用平滑输入              ================
 
-        //第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
+        //(平滑输入)第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
         Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
 
 
-        //===================      将物体二维移动范围由正方形化为圆形    ================
+        //===================      将正方形输入化为圆形输入    ================
         Vector2 TempVc = SqureToCircle(new Vector2(Dturn, Dup));
         float Dturn2 = TempVc.x;
         float Dup2 = TempVc.y;
 
-        dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色要走的模长
+        dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色的速度大小
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
         run = Input.GetKey(KeyA);
 
@@ -111,3 +112,8 @@ public class PlayerInput : MonoBehaviour
 
 
 }
+/*知识点回顾
+ * 1.三元运算符（ TargetDup = ((Input.GetKey(KeyUp) ? 1 : 0) - (Input.GetKey(KeyDown) ? 1 : 0))   ）
+ * 2.引用参数（Mathf.SmoothDamp）
+ * 3.布尔值、条件判断（InputEnable）
+ */

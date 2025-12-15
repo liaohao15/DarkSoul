@@ -8,30 +8,32 @@ public class ActorController : MonoBehaviour
 {
     public GameObject model;//抓取要控制的模型
     public PlayerInput pi;//调用PlayerInput脚本
-    public  float movingSpeed = 2.0f; //基础速度
-    public Vector3 JumpImpulse;//向上跳跃的冲量
-    public float JunmpHight = 4.5f;//向上跳跃的高度
-    public float fallSpeed = 7.0f;//下落速度
-    public bool isFall = false;//标记是否下落
-    private bool isGround = true;//标记是否在地面
-    public float RollHight = 1.5f;//向上翻滚的高度
-    public Vector3 JabImpulse;//后跳的冲量
-    public float JabHight = 10.0f;//后跳的高度
-
     [SerializeField]
     private Animator anim;//获取组件Animator
     [SerializeField]
     private Rigidbody rigid;//获取刚体
 
-    private Vector3 planVc;//角色移动的最终量
+    public  float movingSpeed = 2.0f; //基础速度
     private float RunMultiplier = 2.0f;//当跑步键按下时，乘以这个速度倍率
+
+    public Vector3 JumpImpulse;//向上跳跃的冲量
+    public float JunmpHight = 3.0f;//向上跳跃的高度
+    public float RollHight = 1.5f;//向上翻滚的高度
+
+    public float fallSpeed = 1.0f;//下落速度
+    public bool isFall = false;//标记是否下落
+
+    public Vector3 JabImpulse;//后跳的冲量
+    public float JabHight = 10.0f;//后跳的高度
+
+    private bool isGround = true;//标记是否在地面（由GroundSensor设置）
 
     private Vector3 CharacterTurn;//为角色转向而设计的变量
     private float RunTurn;//为动画切换而设计的变量
 
+    private Vector3 planVc;//角色移动的最终量
+   
     private bool PlanLock;
-
-
 
     // Start is called before the first frame update
     void Awake()
@@ -39,8 +41,6 @@ public class ActorController : MonoBehaviour
         anim = model.GetComponent<Animator>();
         pi = GetComponent<PlayerInput>();
         rigid = GetComponent<Rigidbody>();
-
-
     }
 
     // Update is called once per frame
@@ -93,20 +93,17 @@ public class ActorController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        //1.移动
+        //1.物理移动：把输入的移动向量赋值给刚体速度
         rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse + JabImpulse;
-        //2.跳跃
+        //2.用完冲量后清空，避免持续施加
         JumpImpulse = Vector3.zero;
         JabImpulse = Vector3.zero;
 
     }
-   
-    
-
-
 
     //                          ******************************  信息接收区    *************************************
     //                              ==================      跳跃动作状态的显示     ============================
+    //由动画状态机触发的跳跃逻辑（FSMOnEnter发消息调用）
     public void OnJumpEnter()
     {
         pi.InputEnable = false;
@@ -120,6 +117,7 @@ public class ActorController : MonoBehaviour
 
 
     //                           ==================      人物下落检测区    ============================
+    //地面检测回调（GroundSensor发消息调用）
     public void Ingroud()
     {
         print("is groud");
@@ -160,3 +158,9 @@ public class ActorController : MonoBehaviour
         JabImpulse = model.transform.forward * (-1) * JabHight;
     }
 }
+
+/*知识点回顾
+ * 1.动画参数设置
+ * 2.刚体速度、向量运算
+ * 3.方法调用
+ */
