@@ -13,11 +13,11 @@ public class ActorController : MonoBehaviour
     [SerializeField]
     private Rigidbody rigid;//获取刚体
 
-    public  float movingSpeed = 2.0f; //基础速度
+    public float movingSpeed = 2.0f; //基础速度
     private float RunMultiplier = 2.0f;//当跑步键按下时，乘以这个速度倍率
 
     public Vector3 JumpImpulse;//向上跳跃的冲量
-    public float JunmpHight = 3.0f;//向上跳跃的高度
+    public float JunmpHight = 15.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
 
     public float fallSpeed = 1.0f;//下落速度
@@ -32,7 +32,7 @@ public class ActorController : MonoBehaviour
     private float RunTurn;//为动画切换而设计的变量
 
     private Vector3 planVc;//角色移动的最终量
-   
+
     private bool PlanLock;
 
     // Start is called before the first frame update
@@ -48,7 +48,7 @@ public class ActorController : MonoBehaviour
     { //                             ===========   转向转换缓冲区      ============
         //1.动画转换缓冲
         RunTurn = ((pi.run) ? 2.0f : 1.0f);
-        anim.SetFloat("forward", pi.dL * Mathf.Lerp(anim.GetFloat("forward"),RunTurn,0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
+        anim.SetFloat("forward", pi.dL * Mathf.Lerp(anim.GetFloat("forward"), RunTurn, 0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
 
         //2.人物转向缓冲
         if (pi.dL > 0.1f) //添加这个判断，是为了，避免当玩家没有输入时，他的TargetDug和TargetDturn的变为零，导致角色的面朝方向变为0,0
@@ -60,17 +60,22 @@ public class ActorController : MonoBehaviour
 
         //                  ==================     移动   ==================
         //1.移动，还使用到FixedUpdate方法
-        if (PlanLock == false) 
+        if (PlanLock == false)
         {
             planVc = pi.dL * model.transform.forward * movingSpeed * ((pi.run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
-            
+
         }
 
         //2.跳跃
-        if (pi.jump)
+        if (pi.jump && isGround)
         {
             anim.SetTrigger("jump");
         }
+        /*
+         * 这里有一个类与对象的成员访问（pi是PlayerInput里的一个实例；jump是PlayerInput里的字段）
+         */
+
+
 
         //3.下落
         if (!isGround && rigid.velocity.y < 0)
@@ -78,13 +83,13 @@ public class ActorController : MonoBehaviour
             isFall = true;
             if (isFall)
             {
-                anim.SetBool("isfall",isFall);
+                anim.SetBool("isfall", isFall);
             }
         }
 
         //4.落地翻滚在Ingroud里面
         //4.下落翻滚
-        if (rigid.velocity.magnitude > 4.6f && isGround)
+        if (rigid.velocity.magnitude > 5.0f && isGround)
         {
             anim.SetTrigger("roll");
         }
@@ -99,6 +104,11 @@ public class ActorController : MonoBehaviour
         JumpImpulse = Vector3.zero;
         JabImpulse = Vector3.zero;
 
+        //3.下落
+        if (isFall && rigid.velocity.y > -fallSpeed)
+        {
+            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
+        }
     }
 
     //                          ******************************  信息接收区    *************************************
@@ -108,40 +118,10 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = false;
         PlanLock = true;
-        JumpImpulse = model.transform.forward;
+        JumpImpulse = new Vector3(0, JunmpHight, 0);
+
     }
 
-    //可能要删调这个了
-    public void OnJumpExit()
-    { }
-
-
-    //                           ==================      人物下落检测区    ============================
-    //地面检测回调（GroundSensor发消息调用）
-    public void Ingroud()
-    {
-        print("is groud");
-        isGround = true;
-        anim.SetBool("isgroud", true);
-
-        pi.InputEnable = true;
-        PlanLock = false;
-        anim.SetBool("isfall", false);
-
-        //3.下落
-        if (isFall && rigid.velocity.y > -fallSpeed)
-        {
-            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
-        }
-      
-    }
-
-    public void NotIngroud()
-    {
-        print("not is groud");
-        isGround = false;
-        anim.SetBool("isgroud", false);
-    }
     //                              ==================      翻滚动作状态的显示     ============================
     public void OnRollEnter()
     {
@@ -157,10 +137,37 @@ public class ActorController : MonoBehaviour
         PlanLock = true;
         JabImpulse = model.transform.forward * (-1) * JabHight;
     }
+
+    //                           ==================      人物下落检测区    ============================
+    //地面检测回调（GroundSensor发消息调用）
+    public void Ingroud()
+    {
+        print("is groud");
+        isGround = true;
+        anim.SetBool("isgroud", true);
+
+        pi.InputEnable = true;
+        PlanLock = false;
+        anim.SetBool("isfall", false);
+
+    }
+
+    public void NotIngroud()
+    {
+        print("not is groud");
+        isGround = false;
+        anim.SetBool("isgroud", false);
+    }
+
 }
+
+
+
 
 /*知识点回顾
  * 1.动画参数设置
  * 2.刚体速度、向量运算
  * 3.方法调用
  */
+
+//跳跃

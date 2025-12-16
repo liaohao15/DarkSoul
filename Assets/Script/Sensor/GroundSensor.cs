@@ -15,7 +15,7 @@ public class GroundSensor : MonoBehaviour
     [SerializeField]
     private Vector3 poinT2;
     
-    private float radius;//定义的半径
+    public float radius;//定义的半径
 
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class GroundSensor : MonoBehaviour
         //计算胶囊体的两个端点
         Vector3 realCenter = transform.TransformPoint(cpC.center);
         poinT1 = realCenter - transform.up * (cpC.height - radius);
-        poinT2 = poinT1 - transform.up * 0.2f;
+        poinT2 = poinT1 - transform.up *  + 0.2f;
 
         //胶囊体检测：检测与“Ground”层的碰撞
         //LayerMask layerMask1 = LayerMask.GetMask("Ground");
@@ -48,7 +48,8 @@ public class GroundSensor : MonoBehaviour
         {
             SendMessageUpwards("NotIngroud");
         }
-
+        Debug.DrawLine(poinT1, poinT2, Color.red); // 中轴线（红）
+     
     }
 
 }
