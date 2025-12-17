@@ -169,7 +169,8 @@ MonoBehaviour:
   cpC: {fileID: 643145859}
   poinT1: {x: 0, y: -0.02, z: 0}
   poinT2: {x: 0, y: 0, z: 0}
-  radius: 0.5
+  radius: 0.7
+  offest: 0.001
 --- !u!1001 &422274283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -411,12 +412,8 @@ MonoBehaviour:
   rigid: {fileID: 0}
   movingSpeed: 2
   JumpImpulse: {x: 0, y: 0, z: 0}
-  JunmpHight: 15
+  JunmpHight: 5
   RollHight: 1.5
-  fallSpeed: 1
-  isFall: 0
-  JabImpulse: {x: 0, y: 0, z: 0}
-  JabHight: 10
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0

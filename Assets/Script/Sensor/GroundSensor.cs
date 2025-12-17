@@ -16,10 +16,12 @@ public class GroundSensor : MonoBehaviour
     private Vector3 poinT2;
     
     public float radius;//定义的半径
+    public float offest = 0.1f;
 
     private void Awake()
     {
-        radius = cpC.radius;//这个碰撞体半径是我们物体的胶囊半径
+        radius = cpC.radius - 0.05f;//这个碰撞体半径是我们物体的胶囊半径
+       
     }
 
     void FixedUpdate()
@@ -29,7 +31,7 @@ public class GroundSensor : MonoBehaviour
         //Vector3 realCenter = cpC.center;这个是胶囊相对于物体的中心位置
         //计算胶囊体的两个端点
         Vector3 realCenter = transform.TransformPoint(cpC.center);
-        poinT1 = realCenter - transform.up * (cpC.height - radius);
+        poinT1 = realCenter - transform.up * (cpC.height - radius - offest);
         poinT2 = poinT1 - transform.up *  + 0.2f;
 
         //胶囊体检测：检测与“Ground”层的碰撞

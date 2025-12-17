@@ -13,18 +13,13 @@ public class ActorController : MonoBehaviour
     [SerializeField]
     private Rigidbody rigid;//获取刚体
 
-    public float movingSpeed = 2.0f; //基础速度
+    public float movingSpeed = 1.0f; //基础速度
     private float RunMultiplier = 2.0f;//当跑步键按下时，乘以这个速度倍率
 
     public Vector3 JumpImpulse;//向上跳跃的冲量
-    public float JunmpHight = 15.0f;//向上跳跃的高度
+    public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
-
-    public float fallSpeed = 1.0f;//下落速度
-    public bool isFall = false;//标记是否下落
-
-    public Vector3 JabImpulse;//后跳的冲量
-    public float JabHight = 10.0f;//后跳的高度
+    //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curbur曲线控制就够了
 
     private bool isGround = true;//标记是否在地面（由GroundSensor设置）
 
@@ -77,19 +72,11 @@ public class ActorController : MonoBehaviour
 
 
 
-        //3.下落
-        if (!isGround && rigid.velocity.y < 0)
-        {
-            isFall = true;
-            if (isFall)
-            {
-                anim.SetBool("isfall", isFall);
-            }
-        }
+       
 
         //4.落地翻滚在Ingroud里面
         //4.下落翻滚
-        if (rigid.velocity.magnitude > 5.0f && isGround)
+        if (rigid.velocity.magnitude > 1.6f && isGround)
         {
             anim.SetTrigger("roll");
         }
@@ -99,16 +86,9 @@ public class ActorController : MonoBehaviour
     private void FixedUpdate()
     {
         //1.物理移动：把输入的移动向量赋值给刚体速度
-        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse + JabImpulse;
+        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse ;
         //2.用完冲量后清空，避免持续施加
         JumpImpulse = Vector3.zero;
-        JabImpulse = Vector3.zero;
-
-        //3.下落
-        if (isFall && rigid.velocity.y > -fallSpeed)
-        {
-            rigid.velocity += Vector3.down * fallSpeed * Time.fixedDeltaTime;
-        }
     }
 
     //                          ******************************  信息接收区    *************************************
@@ -135,30 +115,49 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = false;
         PlanLock = true;
-        JabImpulse = model.transform.forward * (-1) * JabHight;
+        //JumpImpulse = model.transform.forward * (-1) * JabHight;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
+        ////所以我们使用模型的方向
+        ///但是不再Enter里而是在Update里是想让他时时刻刻都在更新这个冲量
     }
 
     //                           ==================      人物下落检测区    ============================
     //地面检测回调（GroundSensor发消息调用）
     public void Ingroud()
     {
-        print("is groud");
-        isGround = true;
+        //print("is groud");
+        //isGround = true;
         anim.SetBool("isgroud", true);
 
-        pi.InputEnable = true;
-        PlanLock = false;
-        anim.SetBool("isfall", false);
+        //pi.InputEnable = true;
+        //PlanLock = false;
+        //anim.SetBool("isfall", false);
 
     }
 
     public void NotIngroud()
     {
-        print("not is groud");
-        isGround = false;
+        //print("not is groud");
+        //isGround = false;
         anim.SetBool("isgroud", false);
     }
 
+    public void OnGroundEnter()
+    {
+        pi.InputEnable = true;
+        PlanLock = false;
+    }
+
+    public void OnFallEnter()
+    {
+        pi.InputEnable = false;
+        PlanLock = true;
+    }
+
+    public void OnJabUpdate()
+    {
+        JumpImpulse = model.transform.forward * anim.GetFloat("jabVelocity") ;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
+        //所以我们使用模型的方向
+    }
 }
 
 
