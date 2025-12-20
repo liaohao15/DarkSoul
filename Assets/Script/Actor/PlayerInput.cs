@@ -22,6 +22,13 @@ public class PlayerInput : MonoBehaviour
     public KeyCode KeyB;
     public KeyCode KeyC;
     public KeyCode KeyD;
+
+    [Header("===   cameraConroller")]//这里我们是用来对Camera进行控制的
+    public KeyCode KeyJup ;
+    public KeyCode KeyJdown ;
+    public KeyCode KeyJleft ;
+    public KeyCode KeyJright ;
+
  
     //用正负值来决定上下左右键，其实就是将输入键转化为数值Image
 
@@ -36,6 +43,10 @@ public class PlayerInput : MonoBehaviour
     public float VelocityDturn;
 
     public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
+
+    public float Jup;//当前摄像机上下的输入值
+    public float Jright;//当前摄像机左右的输入值
+
 
     //Pressing signal
     public bool run;
@@ -59,10 +70,23 @@ public class PlayerInput : MonoBehaviour
     void Update()
     {
 
+        // ==============         控制摄像机              ================
+        Jup = ((Input.GetKey(KeyJup) ? 1.0f : 0) - (Input.GetKey(KeyJdown) ? 1.0f : 0));
+        print(Jup);
+        Jright = ((Input.GetKey(KeyJright) ? 1.0f : 0) - (Input.GetKey(KeyJleft) ? 1.0f : 0));
+        print(Jright);
+
+      
+
+
+
+
         // =============            控制方向向量     ===============
         //把按键转化为目标值
         TargetDup = ((Input.GetKey(KeyUp) ? 1.0f : 0) - (Input.GetKey(KeyDown) ? 1.0f : 0));
         TargetDturn = ((Input.GetKey(KeyRight) ? 1.0f : 0) - (Input.GetKey(KeyLeft) ? 1.0f : 0));
+
+
 
         if (InputEnable == false)//使用InputEnable开关来控制玩家的输入功能
         {
@@ -76,7 +100,6 @@ public class PlayerInput : MonoBehaviour
         //(平滑输入)第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
         Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
-
 
         //===================      将正方形输入化为圆形输入    ================
         Vector2 TempVc = SqureToCircle(new Vector2(Dturn, Dup));
@@ -108,6 +131,7 @@ public class PlayerInput : MonoBehaviour
         output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
         return output;
     }
+
 
 
 
