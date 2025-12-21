@@ -25,19 +25,19 @@ public class CameraController : MonoBehaviour
         camera = Camera.main.gameObject;
     }
 
-    public void Update()
+    public void FixUpdate()
     {
         Vector3 tempModelEuler = model.transform.eulerAngles;
-        PlayerHandle.transform.Rotate(Vector3.up,pi.Jright * horizontalSpeed * Time.deltaTime);
+        PlayerHandle.transform.Rotate(Vector3.up,pi.Jright * horizontalSpeed * Time.fixedDeltaTime);//水平
 
-        tempEulerX -= pi.Jup * verticalSpeed * Time.deltaTime;
+        tempEulerX -= pi.Jup * verticalSpeed * Time.fixedDeltaTime;
         tempEulerX = Mathf.Clamp(tempEulerX,-40,30);
-        CameraHandle.transform.localEulerAngles = new Vector3(tempEulerX, 0, 0);
+        CameraHandle.transform.localEulerAngles = new Vector3(tempEulerX, 0, 0);//垂直
 
-        model.transform.eulerAngles = tempModelEuler;
+        model.transform.eulerAngles = tempModelEuler;//赋值现在的相机的位置以及欧拉角
 
-        camera.transform.position = Vector3.Lerp(camera.transform.position, transform.position, 0.1f);
-        camera.transform.eulerAngles = transform.eulerAngles;
+        camera.transform.position = Vector3.Lerp(camera.transform.position, transform.position, 0.1f);//让主摄像机平滑地移动到相机位置以及角度
+        camera.transform.eulerAngles = transform.eulerAngles;//让主相机的欧拉角与相机的欧拉角朝向一致
     }
 
 }
