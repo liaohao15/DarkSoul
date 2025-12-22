@@ -151,6 +151,21 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-6125844822890569421
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac806e286061c4846a8002827dfff40c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clearEnterSignals:
+  - attack
+  clearExitSignals: []
 --- !u!1102 &-5818967788485791209
 AnimatorState:
   serializedVersion: 6
@@ -163,7 +178,9 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -9122515532145863568}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -6125844822890569421}
+  - {fileID: 8199752182682853201}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -438,7 +455,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -5318928796002525814}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 3459706650237962093}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -510,7 +528,7 @@ AnimatorController:
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
-    m_DefaultBool: 0
+    m_DefaultBool: 1
     m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
@@ -528,12 +546,12 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: attack
     m_StateMachine: {fileID: -2018920506838497496}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 174b803ba917d514faa9e243e028f5c5, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: -1
-    m_DefaultWeight: 0
+    m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
@@ -608,6 +626,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnUpdateMessages:
   - OnJabUpdate
+--- !u!114 &3459706650237962093
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372b5498a0e84f84a87f652225e35936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnEnterMessages:
+  - OnAttack1hAEnter
 --- !u!206 &3944939205409986096
 BlendTree:
   m_ObjectHideFlags: 1
@@ -774,6 +806,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnEnterMessages:
   - OnFallEnter
+--- !u!114 &8199752182682853201
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 372b5498a0e84f84a87f652225e35936, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnEnterMessages:
+  - OnAttackIdle
 --- !u!1101 &9005759137776980461
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

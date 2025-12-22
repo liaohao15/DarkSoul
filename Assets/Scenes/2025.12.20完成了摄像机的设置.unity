@@ -384,7 +384,7 @@ MonoBehaviour:
   KeyRight: 100
   KeyA: 304
   KeyB: 107
-  KeyC: 0
+  KeyC: 106
   KeyD: 0
   KeyJup: 273
   KeyJdown: 274
@@ -401,6 +401,7 @@ MonoBehaviour:
   Jright: 0
   run: 0
   jump: 0
+  attack: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
 --- !u!114 &643145862

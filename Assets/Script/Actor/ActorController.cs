@@ -78,7 +78,12 @@ public class ActorController : MonoBehaviour
             anim.SetTrigger("roll");
         }
 
-     
+        //4.攻击
+        if (pi.attack)
+        {
+            anim.SetTrigger("attack");
+        }
+
 
     }
     private void FixedUpdate()
@@ -156,6 +161,17 @@ public class ActorController : MonoBehaviour
         JumpImpulse = model.transform.forward * anim.GetFloat("jabVelocity") ;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
         //所以我们使用模型的方向
     }
+
+    public void OnAttack1hAEnter()
+    {
+        anim.SetLayerWeight(anim.GetLayerIndex("attack"), 1.0f);
+    }
+
+    public void OnAttackIdle()
+    {
+        anim.SetLayerWeight(anim.GetLayerIndex("attack"), 0.0f);
+    }
+
 }
 
 

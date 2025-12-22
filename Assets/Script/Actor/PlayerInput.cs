@@ -53,6 +53,9 @@ public class PlayerInput : MonoBehaviour
     //Trigger signal
     public bool jump;//通过对jump的判断来触发触发器
     private  bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
+    public bool attack;//通过对attack的判断来触发触发器
+    private bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
+
 
     [Header("=== other  === ")]
     public float dL;//(Direction Magnitude)方向模长
@@ -110,6 +113,7 @@ public class PlayerInput : MonoBehaviour
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
         run = Input.GetKey(KeyA);
 
+        //      ======   设置跳跃信号和控制跳跃次数   ======
         bool newJump = Input.GetKey(KeyB);
         if (newJump != Lastjump && newJump == true)
         {
@@ -121,6 +125,19 @@ public class PlayerInput : MonoBehaviour
             jump = false;
         }
         Lastjump = newJump;
+
+        //      ======   设置攻击信号和控制攻击次数   ======
+        bool newattack = Input.GetKey(KeyC);
+        if (newattack != Lastattack && newattack == true)
+        {
+            attack = true;
+            //print("Jump is Pressing");
+        }
+        else
+        {
+            attack = false;
+        }
+        Lastattack = newattack;
     }
 
     //   ============     将方形范围改为圆形范围的方法    ==============
