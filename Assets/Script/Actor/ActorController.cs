@@ -156,21 +156,31 @@ public class ActorController : MonoBehaviour
         PlanLock = true;
     }
 
-    public void OnJabUpdate()
+    public void OnJabUpdate()//这里是让后撤步的时候后退一点
     {
         JumpImpulse = model.transform.forward * anim.GetFloat("jabVelocity") ;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
+        //所以我们使用模型的方向
+    }
+    public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点
+    {
+        JumpImpulse = model.transform.forward * anim.GetFloat("attack1hAVelocity");
         //所以我们使用模型的方向
     }
 
     public void OnAttack1hAEnter()
     {
+        pi.InputEnable = false;
+        PlanLock = true;
         anim.SetLayerWeight(anim.GetLayerIndex("attack"), 1.0f);
     }
 
     public void OnAttackIdle()
     {
+        pi.InputEnable = true;
+        PlanLock = false;
         anim.SetLayerWeight(anim.GetLayerIndex("attack"), 0.0f);
     }
+
 
 }
 
