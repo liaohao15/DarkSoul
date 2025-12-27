@@ -31,6 +31,8 @@ public class ActorController : MonoBehaviour
 
     private bool PlanLock;
 
+    bool canAttack;
+
     // Start is called before the first frame update
     void Awake()
     { //                         ============     获取当前物体的组件   ===================
@@ -79,7 +81,7 @@ public class ActorController : MonoBehaviour
         }
 
         //4.攻击
-        if (pi.attack)
+        if (pi.attack && CheckState("ground") && isGround && canAttack )
         {
             anim.SetTrigger("attack");
         }
@@ -89,10 +91,29 @@ public class ActorController : MonoBehaviour
     private void FixedUpdate()
     {
         //1.物理移动：把输入的移动向量赋值给刚体速度
-        rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse ;
+        if (pi.attack)
+        {
+            rigid.velocity = new Vector3(0, 0, 0);
+        }
+        else 
+        {
+            rigid.velocity = new Vector3(planVc.x, rigid.velocity.y, planVc.z) + JumpImpulse;
+        }
+            
         //2.用完冲量后清空，避免持续施加
         JumpImpulse = Vector3.zero;
     }
+
+    //      ======   用来检测Animator的层级   ======
+    public bool CheckState(string stateName, string layerName = "Base Layer")//（传进来的名字，名字是不是Base layer）
+    {
+        int layerIndex = anim.GetLayerIndex(layerName);
+        bool result = anim.GetCurrentAnimatorStateInfo(layerIndex).IsName(stateName);
+        return result;
+    }
+
+
+
 
     //                          ******************************  信息接收区    *************************************
     //                              ==================      跳跃动作状态的显示     ============================
@@ -102,7 +123,7 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = false;
         PlanLock = true;
         JumpImpulse = new Vector3(0, JunmpHight, 0);
-
+        canAttack = false;
     }
 
     //                              ==================      翻滚动作状态的显示     ============================
@@ -111,6 +132,7 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = false;
         PlanLock = true;
         JumpImpulse = new Vector3(0, RollHight, 0);
+        canAttack = false;
     }
 
     //                              ==================      后跳动作状态的显示     ============================
@@ -118,6 +140,7 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = false;
         PlanLock = true;
+        canAttack = false;
         //JumpImpulse = model.transform.forward * (-1) * JabHight;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
         ////所以我们使用模型的方向
         ///但是不再Enter里而是在Update里是想让他时时刻刻都在更新这个冲量
@@ -148,6 +171,7 @@ public class ActorController : MonoBehaviour
     {
         pi.InputEnable = true;
         PlanLock = false;
+        canAttack = true;
     }
 
     public void OnFallEnter()
