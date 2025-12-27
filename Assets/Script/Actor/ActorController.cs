@@ -21,6 +21,12 @@ public class ActorController : MonoBehaviour
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
     //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curbur曲线控制就够了
+    [Space(10)] 
+    [Header("   === Friction ===   ")]
+    public PhysicMaterial frictionZero;
+
+    public PhysicMaterial frictionOne;
+
 
     private bool isGround = true;//标记是否在地面（由GroundSensor设置）
 
@@ -31,7 +37,8 @@ public class ActorController : MonoBehaviour
 
     private bool PlanLock;
 
-    bool canAttack;
+    bool canAttack;//攻击进行的第三个条件
+    private CapsuleCollider col;
 
     // Start is called before the first frame update
     void Awake()
@@ -39,6 +46,7 @@ public class ActorController : MonoBehaviour
         anim = model.GetComponent<Animator>();
         pi = GetComponent<PlayerInput>();
         rigid = GetComponent<Rigidbody>();
+        col = GetComponent<CapsuleCollider>();
     }
 
     // Update is called once per frame
@@ -172,6 +180,12 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = true;
         PlanLock = false;
         canAttack = true;
+        col.material = frictionOne;
+    }
+
+    public void OnGroundExit()
+    {
+        col.material = frictionZero;
     }
 
     public void OnFallEnter()

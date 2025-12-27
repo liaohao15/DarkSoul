@@ -424,6 +424,8 @@ MonoBehaviour:
   JumpImpulse: {x: 0, y: 0, z: 0}
   JunmpHight: 5
   RollHight: 1.5
+  frictionZero: {fileID: 13400000, guid: baa3bfa1a11332345822ffd1412052de, type: 2}
+  frictionOne: {fileID: 13400000, guid: d820b6268ead0da4cb9b8c3505219d6b, type: 2}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
