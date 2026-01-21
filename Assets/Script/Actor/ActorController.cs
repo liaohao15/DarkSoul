@@ -23,9 +23,9 @@ public class ActorController : MonoBehaviour
     //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curbur曲线控制就够了
     [Space(10)] 
     [Header("   === Friction ===   ")]
-    public PhysicMaterial frictionZero;
+    public PhysicMaterial frictionZero;//摩擦系数为0
 
-    public PhysicMaterial frictionOne;
+    public PhysicMaterial frictionOne;//摩擦系数为1
 
 
     private bool isGround = true;//标记是否在地面（由GroundSensor设置）
@@ -38,7 +38,9 @@ public class ActorController : MonoBehaviour
     private bool PlanLock;
 
     bool canAttack;//攻击进行的第三个条件
-    private CapsuleCollider col;
+    private CapsuleCollider col;//获取胶囊碰撞体
+
+    public float targetValue;
 
     // Start is called before the first frame update
     void Awake()
@@ -199,24 +201,30 @@ public class ActorController : MonoBehaviour
         JumpImpulse = model.transform.forward * anim.GetFloat("jabVelocity") ;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
         //所以我们使用模型的方向
     }
-    public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点
-    {
-        JumpImpulse = model.transform.forward * anim.GetFloat("attack1hAVelocity");
-        //所以我们使用模型的方向
-    }
 
     public void OnAttack1hAEnter()
     {
         pi.InputEnable = false;
         PlanLock = true;
-        anim.SetLayerWeight(anim.GetLayerIndex("attack"), 1.0f);
+        targetValue = 1.0f;//缓冲调整攻击的目标值
+    }
+
+    public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点
+    {
+        JumpImpulse = model.transform.forward * anim.GetFloat("attack1hAVelocity");//所以我们使用模型的方向
+        //       ===      接下来我们做缓冲调整attack层的权重      ====      
+        float currentWeight = anim.GetLayerWeight(anim.GetLayerIndex("attack"));//获取当前的权重
+        currentWeight = Mathf.Lerp(targetValue, currentWeight, 0.1f);//缓冲
+        anim.SetLayerWeight(anim.GetLayerIndex("attack"), currentWeight);//更新
+
     }
 
     public void OnAttackIdle()
     {
         pi.InputEnable = true;
         PlanLock = false;
-        anim.SetLayerWeight(anim.GetLayerIndex("attack"), 0.0f);
+       // anim.SetLayerWeight(anim.GetLayerIndex("attack"), 0.0f);
+        targetValue = 0.0f;
     }
 
 
