@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -20,7 +21,7 @@ public class ActorController : MonoBehaviour
     public Vector3 JumpImpulse;//向上跳跃的冲量
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
-    //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curbur曲线控制就够了
+    //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curigidur曲线控制就够了
     [Space(10)] 
     [Header("   === Friction ===   ")]
     public PhysicMaterial frictionZero;//摩擦系数为0
@@ -207,6 +208,8 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = false;
         PlanLock = true;
         targetValue = 1.0f;//缓冲调整攻击的目标值
+       
+
     }
 
     public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点
@@ -214,12 +217,14 @@ public class ActorController : MonoBehaviour
         JumpImpulse = model.transform.forward * anim.GetFloat("attack1hAVelocity");//所以我们使用模型的方向
         //       ===      接下来我们做缓冲调整attack层的权重      ====      
         float currentWeight = anim.GetLayerWeight(anim.GetLayerIndex("attack"));//获取当前的权重
-        currentWeight = Mathf.Lerp(targetValue, currentWeight, 0.1f);//缓冲
+        currentWeight = Mathf.Lerp(targetValue, currentWeight, 0.5f);//缓冲
         anim.SetLayerWeight(anim.GetLayerIndex("attack"), currentWeight);//更新
+        //UnityEngine.Debug.Log("Attack层权重：" + anim.GetLayerWeight(anim.GetLayerIndex("attack")));测试是否转入到攻击层次
+
 
     }
 
-    public void OnAttackIdle()
+    public void OnAttackIdleEnter()
     {
         pi.InputEnable = true;
         PlanLock = false;
@@ -227,6 +232,16 @@ public class ActorController : MonoBehaviour
         targetValue = 0.0f;
     }
 
+    public void OnAttackIdleUpdate()
+    {
+
+        JumpImpulse = model.transform.forward * anim.GetFloat("attack1hAVelocity");//所以我们使用模型的方向
+        //       ===      接下来我们做缓冲调整attack层的权重      ====      
+        float currentWeight = anim.GetLayerWeight(anim.GetLayerIndex("attack"));//获取当前的权重
+        currentWeight = Mathf.Lerp(targetValue, currentWeight, 0.5f);//缓冲
+        anim.SetLayerWeight(anim.GetLayerIndex("attack"), currentWeight);//更新
+       
+    }
 
 }
 

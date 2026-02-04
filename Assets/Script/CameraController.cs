@@ -19,9 +19,14 @@ public class CameraController : MonoBehaviour
     void Awake()
     {
         CameraHandle = transform.parent.gameObject;
-        PlayerHandle = CameraHandle.transform.parent.gameObject;
         tempEulerX = 20.0f;
-        model = PlayerHandle.GetComponent<ActorController>().model;
+        //PlayerHandle = CameraHandle.transform.parent.gameObject;//PlayerHandle这里是我们的人物模型。但实际上应该是最顶层的PlayerHandle
+        //model = PlayerHandle.GetComponent<ActorController>().model;// 我的这个是“危险代码”，必须拆分成两步并加空值判断。
+        ActorController actor = PlayerHandle.GetComponentInChildren<ActorController>();
+        if (actor != null && actor.model != null)
+        {
+            model = actor.model;
+        }
         camera = Camera.main.gameObject;
     }
 
