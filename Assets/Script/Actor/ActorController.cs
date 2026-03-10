@@ -22,6 +22,7 @@ public class ActorController : MonoBehaviour
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
     //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curigidur曲线控制就够了
+
     [Space(10)] 
     [Header("   === Friction ===   ")]
     public PhysicMaterial frictionZero;//摩擦系数为0
@@ -42,6 +43,8 @@ public class ActorController : MonoBehaviour
     private CapsuleCollider col;//获取胶囊碰撞体
 
     public float targetValue;
+
+    private Vector3 deltaPos;
 
     // Start is called before the first frame update
     void Awake()
@@ -101,6 +104,7 @@ public class ActorController : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        rigid.position += deltaPos;
         //1.物理移动：把输入的移动向量赋值给刚体速度
         if (pi.attack)
         {
@@ -113,6 +117,8 @@ public class ActorController : MonoBehaviour
             
         //2.用完冲量后清空，避免持续施加
         JumpImpulse = Vector3.zero;
+        deltaPos = Vector3.zero;
+
     }
 
     //      ======   用来检测Animator的层级   ======
@@ -241,6 +247,16 @@ public class ActorController : MonoBehaviour
         currentWeight = Mathf.Lerp(targetValue, currentWeight, 0.5f);//缓冲
         anim.SetLayerWeight(anim.GetLayerIndex("attack"), currentWeight);//更新
        
+
+    }
+
+
+    public void OnUpdateRM(object _deltaPos)
+    {
+        if (CheckState("attack1hC", "attack") || CheckState("attack1hB", "attack"))
+        {
+            deltaPos += (Vector3)_deltaPos;
+        }
     }
 
 }
@@ -248,10 +264,3 @@ public class ActorController : MonoBehaviour
 
 
 
-/*知识点回顾
- * 1.动画参数设置
- * 2.刚体速度、向量运算
- * 3.方法调用
- */
-
-//跳跃
