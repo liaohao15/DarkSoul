@@ -9,7 +9,9 @@ using UnityEngine;
 public class ActorController : MonoBehaviour
 {
     public GameObject model;//抓取要控制的模型
-    public PlayerInput pi;//调用PlayerInput脚本
+    //public PlayerInput pi;//调用PlayerInput脚本。修改成手柄输入
+    public JoystickInput pi;
+
     [SerializeField]
     private Animator anim;//获取组件Animator
     [SerializeField]
@@ -50,7 +52,8 @@ public class ActorController : MonoBehaviour
     void Awake()
     { //                         ============     获取当前物体的组件   ===================
         anim = model.GetComponent<Animator>();
-        pi = GetComponent<PlayerInput>();
+        //pi = GetComponent<PlayerInput>();修改成手柄输入
+        pi = GetComponent<JoystickInput>();
         rigid = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
     }
@@ -66,7 +69,7 @@ public class ActorController : MonoBehaviour
         if (pi.dL > 0.1f) //添加这个判断，是为了，避免当玩家没有输入时，他的TargetDug和TargetDturn的变为零，导致角色的面朝方向变为0,0
         {
 
-            CharacterTurn = Vector3.Slerp(model.transform.forward, pi.dV, 0.3f);//Vector3.Slerp（ 球面插值）是用来做人物转向缓冲的
+            CharacterTurn = Vector3.Slerp(model.transform.forward, pi.dV, 0.5f);//Vector3.Slerp（ 球面插值）是用来做人物转向缓冲的
             model.transform.forward = CharacterTurn;
         }
 
