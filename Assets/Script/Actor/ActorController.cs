@@ -10,7 +10,7 @@ public class ActorController : MonoBehaviour
 {
     public GameObject model;//抓取要控制的模型
     //public PlayerInput pi;//调用PlayerInput脚本。修改成手柄输入
-    public JoystickInput pi;
+    public BaseUserInput pi;
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -53,14 +53,27 @@ public class ActorController : MonoBehaviour
     { //                         ============     获取当前物体的组件   ===================
         anim = model.GetComponent<Animator>();
         //pi = GetComponent<PlayerInput>();修改成手柄输入
-        pi = GetComponent<JoystickInput>();
+        //这个代码是用来控制输入选择的，但是他只在Awake阶段进行一次
+        BaseUserInput[] inputs = GetComponents<BaseUserInput>();//继续修改用，抽象类来分装
+        foreach (var input in inputs)
+        {
+            if (input.enabled == true)
+            {
+                pi = input;
+                break;
+            }
+        }
+
+
         rigid = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
     }
 
     // Update is called once per frame
     void Update()
-    { //                             ===========   转向转换缓冲区      ============
+    {
+        RefreshInput();//一运行，就进行一次输入源的选择
+        //                             ===========   转向转换缓冲区      ============
         //1.动画转换缓冲
         RunTurn = ((pi.run) ? 2.0f : 1.0f);
         anim.SetFloat("forward", pi.dL * Mathf.Lerp(anim.GetFloat("forward"), RunTurn, 0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
@@ -132,7 +145,20 @@ public class ActorController : MonoBehaviour
         return result;
     }
 
-
+    //      ======   进行输入源的选择方法   ======
+    public void RefreshInput()
+    {
+        BaseUserInput[] inputs = GetComponents<BaseUserInput>();
+        foreach (var input in inputs)
+        {
+            if (input.enabled == true)
+            {
+                pi = input;
+                break;
+            }
+        }
+        
+    }
 
 
     //                          ******************************  信息接收区    *************************************
@@ -258,7 +284,7 @@ public class ActorController : MonoBehaviour
     {
         if (CheckState("attack1hC", "attack") || CheckState("attack1hB", "attack"))
         {
-            deltaPos += (Vector3)_deltaPos;
+            deltaPos += (deltaPos + (Vector3)_deltaPos)/2;
         }
     }
 

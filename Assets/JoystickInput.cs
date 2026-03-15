@@ -2,49 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JoystickInput : MonoBehaviour
+public class JoystickInput : BaseUserInput
 {
     [Header("======  JoystickInput Setting ======")]
     public string axisX = "axisX";
     public string axisY = "axisY";
-    public KeyCode KeyA;
-    public KeyCode KeyB;
-    public KeyCode KeyC;
-    public KeyCode KeyD;
+    public string btnA = "btn0";
+    public string btnB = "btn1";
+    public string btnC = "btn2";
+    public string btnD = "btn3";
     public string axisJup = "axis3";
     public string axisJright= "axis4";
+    public string btnLB = "btn4";
+    public string btnLT = "btn6";
 
 
-    [Header("===  Joystick signal  ===")]
-    public float Dup;//当前前后输入值
-    public float Dturn;//当前左右输入值
-    public float TargetDup;//目标前后输入值
-    public float TargetDturn;//目标左右输入值
-    public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
-    public float VelocityDturn;
+    //[Header("===  Joystick signal  ===")]
+    //public float Dup;//当前前后输入值
+    //public float Dturn;//当前左右输入值
+    //public float TargetDup;//目标前后输入值
+    //public float TargetDturn;//目标左右输入值
+    //public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
+    //public float VelocityDturn;
 
-    //Pressing signal
-    public bool run;
-    //Trigger signal
-    public bool jump;//通过对jump的判断来触发触发器
-    private bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
-    public bool attack;//通过对attack的判断来触发触发器
-    private bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
-
-
-    public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
-
-    public float Jup;//当前摄像机上下的输入值
-    public float Jright;//当前摄像机左右的输入值
-
-    [Header("=== other  === ")]
-    public float dL;//(Direction Magnitude)方向模长
-    public Vector3 dV;//(Direction Vector)方向向量
+    ////Pressing signal
+    //public bool run;
+    ////Trigger signal
+    //public bool jump;//通过对jump的判断来触发触发器
+    //private bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
+    //public bool attack;//通过对attack的判断来触发触发器
+    //private bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
 
 
+    //public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
 
-    // Update is called once per frame
-    void Update()
+    //public float Jup;//当前摄像机上下的输入值
+    //public float Jright;//当前摄像机左右的输入值
+
+    //[Header("=== other  === ")]
+    //public float dL;//(Direction Magnitude)方向模长
+    //public Vector3 dV;//(Direction Vector)方向向量
+
+
+
+    // 修改一下，将原来的update()里的逻辑修改成这样
+    void  Update()
     {
 
         // ==============         控制摄像机              ================
@@ -76,11 +78,13 @@ public class JoystickInput : MonoBehaviour
 
         dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色的速度大小
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
-        run = Input.GetKey(KeyA);
+
+
+        run = Input.GetButton(btnA);//控制跑步按键
 
 
         //      ======   设置跳跃信号和控制跳跃次数   ======
-        bool newJump = Input.GetKey(KeyB);
+        bool newJump = Input.GetButton(btnB);
         if (newJump != Lastjump && newJump == true)
         {
             jump = true;
@@ -93,7 +97,7 @@ public class JoystickInput : MonoBehaviour
         Lastjump = newJump;
 
         //      ======   设置攻击信号和控制攻击次数   ======
-        bool newattack = Input.GetKey(KeyC);
+        bool newattack = Input.GetButton(btnC);
         if (newattack != Lastattack && newattack == true)
         {
             attack = true;
@@ -108,13 +112,13 @@ public class JoystickInput : MonoBehaviour
 
 
     //   ============     将方形范围改为圆形范围的方法    ==============
-    public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
-    {
-        Vector2 output = Vector2.zero;
-        output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
-        output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
-        return output;
-    }
+    //public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
+    //{
+    //    Vector2 output = Vector2.zero;
+    //    output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
+    //    output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
+    //    return output;
+    //}
 
 
 }

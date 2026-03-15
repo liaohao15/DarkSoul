@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using UnityEngine;
 
-public class PlayerInput : MonoBehaviour
+public class KeyboardInput : BaseUserInput
 {
 
     //设置玩家的移动键
@@ -24,42 +24,42 @@ public class PlayerInput : MonoBehaviour
     public KeyCode KeyD;
 
     [Header("===   cameraConroller")]//这里我们是用来对Camera进行控制的
-    public KeyCode KeyJup ;
-    public KeyCode KeyJdown ;
-    public KeyCode KeyJleft ;
-    public KeyCode KeyJright ;
-
- 
-    //用正负值来决定上下左右键，其实就是将输入键转化为数值Image
-
-    [Header("===  key signal  ===")]
-    public float Dup;//当前前后输入值
-    public float Dturn;//当前左右输入值
-
-    public float TargetDup;//目标前后输入值
-    public float TargetDturn;//目标左右输入值
-
-    public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
-    public float VelocityDturn;
-
-    public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
-
-    public float Jup;//当前摄像机上下的输入值
-    public float Jright;//当前摄像机左右的输入值
+    public KeyCode KeyJup;
+    public KeyCode KeyJdown;
+    public KeyCode KeyJleft;
+    public KeyCode KeyJright;
 
 
-    //Pressing signal
-    public bool run;
-    //Trigger signal
-    public bool jump;//通过对jump的判断来触发触发器
-    private  bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
-    public bool attack;//通过对attack的判断来触发触发器
-    private bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
+    ////用正负值来决定上下左右键，其实就是将输入键转化为数值Image
+
+    //[Header("===  key signal  ===")]
+    //public float Dup;//当前前后输入值
+    //public float Dturn;//当前左右输入值
+
+    //public float TargetDup;//目标前后输入值
+    //public float TargetDturn;//目标左右输入值
+
+    //public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
+    //public float VelocityDturn;
+
+    //public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
+
+    //public float Jup;//当前摄像机上下的输入值
+    //public float Jright;//当前摄像机左右的输入值
 
 
-    [Header("=== other  === ")]
-    public float dL;//(Direction Magnitude)方向模长
-    public Vector3 dV;//(Direction Vector)方向向量
+    ////Pressing signal
+    //public bool run;
+    ////Trigger signal
+    //public bool jump;//通过对jump的判断来触发触发器
+    //private  bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
+    //public bool attack;//通过对attack的判断来触发触发器
+    //private bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
+
+
+    //[Header("=== other  === ")]
+    //public float dL;//(Direction Magnitude)方向模长
+    //public Vector3 dV;//(Direction Vector)方向向量
 
     // Start is called before the first frame update
     void Start()
@@ -69,7 +69,7 @@ public class PlayerInput : MonoBehaviour
 
 
 
-    // Update is called once per frame
+    // 同理，修改update
     void Update()
     {
 
@@ -140,14 +140,14 @@ public class PlayerInput : MonoBehaviour
         Lastattack = newattack;
     }
 
-    //   ============     将方形范围改为圆形范围的方法    ==============
-    public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
-    { 
-        Vector2 output = Vector2.zero;
-        output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
-        output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
-        return output;
-    }
+    ////   ============     将方形范围改为圆形范围的方法    ==============
+    //public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
+    //{ 
+    //    Vector2 output = Vector2.zero;
+    //    output.x = input.x * Mathf.Sqrt(1 - input.y * input.y / 2);
+    //    output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
+    //    return output;
+    //}
 
 
 
