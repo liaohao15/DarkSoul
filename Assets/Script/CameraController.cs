@@ -4,58 +4,64 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    //public PlayerInput pi;ĞŞ¸Ä³ÉÊÖ±úÊäÈë
-    public JoystickInput pi;
-    public float horizontalSpeed = 80.0f;//ÉãÏñ»úË®Æ½µÄËÙ¶È
-    public float verticalSpeed = 80.0f;//ÉãÏñ»ú´¹Ö±µÄËÙ¶È
+    //public PlayerInput pi;ä¿®æ”¹æˆæ‰‹æŸ„è¾“å…¥
+    public BaseUserInput pi;
+    public float horizontalSpeed = 80.0f;//æ‘„åƒæœºæ°´å¹³çš„é€Ÿåº¦
+    public float verticalSpeed = 80.0f;//æ‘„åƒæœºå‚ç›´çš„é€Ÿåº¦
 
     public GameObject PlayerHandle;
     public GameObject CameraHandle;
 
-    private float tempEulerX;//ÉãÏñ»ú´¹Ö±Ğı×ª½Ç¶È
-    private float tempEulerY;//ÉãÏñ»úË®Æ½Ğı×ª½Ç¶È
+    private float tempEulerX;//æ‘„åƒæœºå‚ç›´æ—‹è½¬è§’åº¦
+    private float tempEulerY;//æ‘„åƒæœºæ°´å¹³æ—‹è½¬è§’åº¦
 
     private GameObject model;
-    public GameObject camera;
+    public Camera maincamera;
 
     void Awake()
     {
+        maincamera = Camera.main;
         CameraHandle = transform.parent.gameObject;
         tempEulerX = 20.0f;
-        //PlayerHandle = CameraHandle.transform.parent.gameObject;//PlayerHandleÕâÀïÊÇÎÒÃÇµÄÈËÎïÄ£ĞÍ¡£µ«Êµ¼ÊÉÏÓ¦¸ÃÊÇ×î¶¥²ãµÄPlayerHandle
-        //model = PlayerHandle.GetComponent<ActorController>().model;// ÎÒµÄÕâ¸öÊÇ¡°Î£ÏÕ´úÂë¡±£¬±ØĞë²ğ·Ö³ÉÁ½²½²¢¼Ó¿ÕÖµÅĞ¶Ï¡£
+        //PlayerHandle = CameraHandle.transform.parent.gameObject;//PlayerHandleè¿™é‡Œæ˜¯æˆ‘ä»¬çš„äººç‰©æ¨¡å‹ã€‚ä½†å®é™…ä¸Šåº”è¯¥æ˜¯æœ€é¡¶å±‚çš„PlayerHandle
+        //model = PlayerHandle.GetComponent<ActorController>().model;// æˆ‘çš„è¿™ä¸ªæ˜¯â€œå±é™©ä»£ç â€ï¼Œå¿…é¡»æ‹†åˆ†æˆä¸¤æ­¥å¹¶åŠ ç©ºå€¼åˆ¤æ–­ã€‚
 
-        //³õÊ¼»¯Ë®Æ½Ğı×ª½Ç¶È
+        //åˆå§‹åŒ–æ°´å¹³æ—‹è½¬è§’åº¦
         tempEulerY = CameraHandle.transform.localEulerAngles.y;
         ActorController actor = PlayerHandle.GetComponentInChildren<ActorController>();
         if (actor != null && actor.model != null)
         {
             model = actor.model;
         }
-        camera = Camera.main.gameObject;
+        
     }
 
     void FixedUpdate()
     {
-        //ÉãÏñ»úË®Æ½Ğı×ª
+        //æ‘„åƒæœºæ°´å¹³æ—‹è½¬
         Vector3 tempModelEuler = model.transform.eulerAngles;
-        //PlayerHandle.transform.Rotate(Vector3.up,pi.Jright * horizontalSpeed * Time.fixedDeltaTime);//Ë®Æ½¡£³öÏÖÁË¿ØÖÆÈËÎïÎ»ÒÆµÄÎÊÌâ
+        //PlayerHandle.transform.Rotate(Vector3.up,pi.Jright * horizontalSpeed * Time.fixedDeltaTime);//æ°´å¹³ã€‚å‡ºç°äº†æ§åˆ¶äººç‰©ä½ç§»çš„é—®é¢˜
 
         tempEulerY += pi.Jright * horizontalSpeed * Time.fixedDeltaTime;
-        // ÏŞÖÆË®Æ½Ğı×ª·¶Î§
+        // é™åˆ¶æ°´å¹³æ—‹è½¬èŒƒå›´
         tempEulerY = Mathf.Clamp(tempEulerY, -180, 180);
 
 
-        //ÉãÏñ»ú´¹Ö±Ğı×ª
+        //æ‘„åƒæœºå‚ç›´æ—‹è½¬
         tempEulerX -= pi.Jup * verticalSpeed * Time.fixedDeltaTime;
         tempEulerX = Mathf.Clamp(tempEulerX, -40, 30);
-        CameraHandle.transform.localEulerAngles = new Vector3(tempEulerX, tempEulerY, 0);//´¹Ö±+Ë®Æ½
+        CameraHandle.transform.localEulerAngles = new Vector3(tempEulerX, tempEulerY, 0);//å‚ç›´+æ°´å¹³
 
-        model.transform.eulerAngles = tempModelEuler;//¸³ÖµÏÖÔÚµÄÏà»úµÄÎ»ÖÃÒÔ¼°Å·À­½Ç
+        model.transform.eulerAngles = tempModelEuler;//èµ‹å€¼ç°åœ¨çš„ç›¸æœºçš„ä½ç½®ä»¥åŠæ¬§æ‹‰è§’
 
-        camera.transform.position = Vector3.Lerp(camera.transform.position, transform.position, 0.1f);//ÈÃÖ÷ÉãÏñ»úÆ½»¬µØÒÆ¶¯µ½Ïà»úÎ»ÖÃÒÔ¼°½Ç¶È
-        //    camera.transform.eulerAngles = transform.eulerAngles;//ÈÃÖ÷Ïà»úµÄÅ·À­½ÇÓëÏà»úµÄÅ·À­½Ç³¯ÏòÒ»ÖÂ
-        camera.transform.LookAt(CameraHandle.transform);
-
+        maincamera.transform.position = Vector3.Lerp(maincamera.transform.position, transform.position, Time.deltaTime * 0.2f);//è®©ä¸»æ‘„åƒæœºå¹³æ»‘åœ°ç§»åŠ¨åˆ°ç›¸æœºä½ç½®ä»¥åŠè§’åº¦
+        //    camera.transform.eulerAngles = transform.eulerAngles;//è®©ä¸»ç›¸æœºçš„æ¬§æ‹‰è§’ä¸ç›¸æœºçš„æ¬§æ‹‰è§’æœå‘ä¸€è‡´
+        Vector3 targetDir = CameraHandle.transform.position - maincamera.transform.position;
+        Quaternion targetRot = Quaternion.LookRotation(targetDir);
+        maincamera.transform.rotation = Quaternion.Lerp(
+            maincamera.transform.rotation,
+            targetRot,
+            Time.deltaTime * 5f  // æ—‹è½¬å¹³æ»‘é€Ÿåº¦ï¼Œæ•°å€¼è¶Šå¤§è½¬å‘è¶Šå¿«
+        );
     }
 }

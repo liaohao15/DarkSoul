@@ -349,7 +349,7 @@ GameObject:
   m_Component:
   - component: {fileID: 598978750}
   m_Layer: 0
-  m_Name: Player
+  m_Name: PlayerHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -472,11 +472,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Dup: 0
   Dturn: 0
-  TargetDup: 0
+  TargetDup: -0.06
   TargetDturn: 0
   VelocityDup: 0
   VelocityDturn: 0
   run: 0
+  defense: 0
   jump: 0
   attack: 0
   InputEnable: 1
@@ -484,6 +485,9 @@ MonoBehaviour:
   Jright: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
+  mouseEnable: 1
+  mouseSensitivityX: 100
+  mouseSensitivityY: 100
   KeyUp: 119
   KeyDown: 115
   KeyLeft: 97
@@ -492,10 +496,10 @@ MonoBehaviour:
   KeyB: 107
   KeyC: 106
   KeyD: 0
-  KeyJup: 0
-  KeyJdown: 0
-  KeyJleft: 0
-  KeyJright: 0
+  KeyJup: 273
+  KeyJdown: 274
+  KeyJleft: 276
+  KeyJright: 275
 --- !u!114 &643145862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -538,6 +542,7 @@ MonoBehaviour:
   VelocityDup: 0
   VelocityDturn: 0
   run: 0
+  defense: 0
   jump: 0
   attack: 0
   InputEnable: 1
@@ -545,6 +550,9 @@ MonoBehaviour:
   Jright: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
+  mouseEnable: 1
+  mouseSensitivityX: 100
+  mouseSensitivityY: 100
   axisX: axisX
   axisY: axisY
   btnA: btn0
@@ -553,6 +561,8 @@ MonoBehaviour:
   btnD: btn3
   axisJup: axis3
   axisJright: axis4
+  btnLB: btn4
+  btnLT: btn6
 --- !u!114 &643145865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -889,7 +899,7 @@ MonoBehaviour:
   verticalSpeed: 80
   PlayerHandle: {fileID: 598978746}
   CameraHandle: {fileID: 124321774}
-  camera: {fileID: 963194225}
+  maincamera: {fileID: 0}
 --- !u!4 &1001442481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}

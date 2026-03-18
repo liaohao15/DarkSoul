@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class KeyboardInput : BaseUserInput
@@ -23,11 +24,16 @@ public class KeyboardInput : BaseUserInput
     public KeyCode KeyC;
     public KeyCode KeyD;
 
-    [Header("===   cameraConroller")]//这里我们是用来对Camera进行控制的
-    public KeyCode KeyJup;
-    public KeyCode KeyJdown;
-    public KeyCode KeyJleft;
-    public KeyCode KeyJright;
+    //[Header("===   cameraConroller")]//这里我们是用来对Camera进行控制的
+    //public KeyCode KeyJup;
+    //public KeyCode KeyJdown;
+    //public KeyCode KeyJleft;
+    //public KeyCode KeyJright;
+
+    //[Header("===   Mouse setting   ===")]//用滑鼠来控制视角切换
+    //public bool mouseEnable = false;
+    //public float mouseSensitivityX = 1f;
+    //public float mouseSensitivityY = 1f;
 
 
     ////用正负值来决定上下左右键，其实就是将输入键转化为数值Image
@@ -73,12 +79,21 @@ public class KeyboardInput : BaseUserInput
     void Update()
     {
 
-        // ==============         控制摄像机              ================
-        Jup = ((Input.GetKey(KeyJup) ? 1.0f : 0) - (Input.GetKey(KeyJdown) ? 1.0f : 0));
-        print(Jup);
-        Jright = ((Input.GetKey(KeyJright) ? 1.0f : 0) - (Input.GetKey(KeyJleft) ? 1.0f : 0));
-        print(Jright);
 
+        // ==============         控制摄像机================
+        if (mouseEnable == true)
+        {
+            //              修改成用滑鼠来控制
+            Jup = Input.GetAxis("Mouse Y")*mouseSensitivityY;
+            Jright = Input.GetAxis("Mouse X")*mouseSensitivityX;
+        }
+        else
+        {
+            Jup = ((Input.GetKey(KeyJup) ? 1.0f : 0) - (Input.GetKey(KeyJdown) ? 1.0f : 0));
+            print(Jup);
+            Jright = ((Input.GetKey(KeyJright) ? 1.0f : 0) - (Input.GetKey(KeyJleft) ? 1.0f : 0));
+            print(Jright);
+        }
       
 
 

@@ -116,6 +116,8 @@ public class ActorController : MonoBehaviour
             anim.SetTrigger("attack");
         }
 
+        //5.·ÀÓù
+        anim.SetBool("defense", pi.defense);
 
     }
     private void FixedUpdate()

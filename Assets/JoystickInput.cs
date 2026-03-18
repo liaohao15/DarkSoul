@@ -16,6 +16,16 @@ public class JoystickInput : BaseUserInput
     public string btnLB = "btn4";
     public string btnLT = "btn6";
 
+    public MyButton btnx = new MyButton(); 
+
+    public MyButton buttonA = new MyButton();
+    public MyButton buttonB = new MyButton();
+    public MyButton buttonC = new MyButton();
+    public MyButton buttonD = new MyButton();
+    public MyButton buttonLB = new MyButton();
+    public MyButton buttonLT = new MyButton();
+
+
 
     //[Header("===  Joystick signal  ===")]
     //public float Dup;//当前前后输入值
@@ -46,8 +56,18 @@ public class JoystickInput : BaseUserInput
 
 
     // 修改一下，将原来的update()里的逻辑修改成这样
-    void  Update()
+    void Update()
     {
+        buttonA.Tick(Input.GetButton(btnA));
+        buttonB.Tick(Input.GetButton(btnB));
+        buttonC.Tick(Input.GetButton(btnC));
+        buttonD.Tick(Input.GetButton(btnD));
+        buttonLB.Tick(Input.GetButton(btnLB));
+        buttonLT.Tick(Input.GetButton(btnLT));
+
+        //print(btnx.IsPressing);
+        //print(btnx.OnPressed);
+        print(btnx.OnReleased);
 
         // ==============         控制摄像机              ================
         Jup = (Input.GetAxis(axisJup));
@@ -80,34 +100,45 @@ public class JoystickInput : BaseUserInput
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
 
 
-        run = Input.GetButton(btnA);//控制跑步按键
+        //run = Input.GetButton(btnA);//控制跑步按键
+        //优化跑步按键
+        run = buttonA.IsPressing;
 
+        //defense = Input.GetButton(btnLB);//控制防御动作
+        //优化防御动作
+        defense = buttonLB.IsPressing;
 
         //      ======   设置跳跃信号和控制跳跃次数   ======
-        bool newJump = Input.GetButton(btnB);
-        if (newJump != Lastjump && newJump == true)
-        {
-            jump = true;
-            //print("Jump is Pressing");
-        }
-        else
-        {
-            jump = false;
-        }
-        Lastjump = newJump;
+        //bool newJump = Input.GetButton(btnB);
+        //if (newJump != Lastjump && newJump == true)
+        //{
+        //    jump = true;
+        //    //print("Jump is Pressing");
+        //}
+        //else
+        //{
+        //    jump = false;
+        //}
+        //Lastjump = newJump;
+        //优化跳跃信号
+        jump = buttonB.OnPressed;
+
 
         //      ======   设置攻击信号和控制攻击次数   ======
-        bool newattack = Input.GetButton(btnC);
-        if (newattack != Lastattack && newattack == true)
-        {
-            attack = true;
-            //print("Jump is Pressing");
-        }
-        else
-        {
-            attack = false;
-        }
-        Lastattack = newattack;
+        //    bool newattack = Input.GetButton(btnC);
+        //    if (newattack != Lastattack && newattack == true)
+        //    {
+        //        attack = true;
+        //        //print("Jump is Pressing");
+        //    }
+        //    else
+        //    {
+        //        attack = false;
+        //    }
+        //    Lastattack = newattack;
+        //}
+        //优化攻击信号
+        attack = buttonC.OnPressed;
     }
 
 
