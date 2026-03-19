@@ -485,6 +485,10 @@ MonoBehaviour:
   Jright: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
+  KeyJup: 273
+  KeyJdown: 274
+  KeyJleft: 276
+  KeyJright: 275
   mouseEnable: 1
   mouseSensitivityX: 100
   mouseSensitivityY: 100
@@ -493,13 +497,9 @@ MonoBehaviour:
   KeyLeft: 97
   KeyRight: 100
   KeyA: 304
-  KeyB: 107
-  KeyC: 106
+  KeyB: 324
+  KeyC: 323
   KeyD: 0
-  KeyJup: 273
-  KeyJdown: 274
-  KeyJleft: 276
-  KeyJright: 275
 --- !u!114 &643145862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -550,6 +550,10 @@ MonoBehaviour:
   Jright: 0
   dL: 0
   dV: {x: 0, y: 0, z: 0}
+  KeyJup: 0
+  KeyJdown: 0
+  KeyJleft: 0
+  KeyJright: 0
   mouseEnable: 1
   mouseSensitivityX: 100
   mouseSensitivityY: 100
@@ -899,7 +903,7 @@ MonoBehaviour:
   verticalSpeed: 80
   PlayerHandle: {fileID: 598978746}
   CameraHandle: {fileID: 124321774}
-  maincamera: {fileID: 0}
+  maincamera: {fileID: 963194227}
 --- !u!4 &1001442481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}

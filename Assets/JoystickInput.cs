@@ -65,15 +65,17 @@ public class JoystickInput : BaseUserInput
         buttonLB.Tick(Input.GetButton(btnLB));
         buttonLT.Tick(Input.GetButton(btnLT));
 
+
+        print(buttonA.IsExtending);
         //print(btnx.IsPressing);
         //print(btnx.OnPressed);
-        print(btnx.OnReleased);
+        //print(btnx.OnReleased);
 
         // ==============         控制摄像机              ================
         Jup = (Input.GetAxis(axisJup));
-        print(Jup);
+        //print(Jup);
         Jright = (Input.GetAxis(axisJright));
-        print(Jright);
+        //print(Jright);
 
         // =============            控制方向向量     ===============
         //把按键转化为目标值
