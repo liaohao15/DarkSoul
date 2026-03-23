@@ -47,4 +47,10 @@ public class Mytimer
         elapsedTime = 0;
         state = STATE.RUN;
     }
+    public void Stop()//重置时间，以及切换为闲置状态
+    {
+        elapsedTime = 0;
+        state = STATE.IDLE;
+    }
+
 }

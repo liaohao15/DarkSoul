@@ -108,7 +108,7 @@ public class JoystickInput : BaseUserInput
 
         //run = Input.GetButton(btnA);//控制跑步按键
         //优化跑步按键
-        run = buttonA.IsPressing;
+        run = (buttonA.IsPressing && buttonA.IsDelaying) || buttonA.IsExtending;
 
         //defense = Input.GetButton(btnLB);//控制防御动作
         //优化防御动作

@@ -8,21 +8,18 @@ public class MyButton
     public bool OnPressed = false;//刚刚被按住
     public bool OnReleased = false;//刚刚被释放
     public bool IsExtending = false;//拓展信号
+    public bool IsDelaying = false;//长按信号
+
+    public float extendingDuration = 0.3f;//拓展持续时间
+    public float delayingDuration = 1.0f;//长按持续时间
 
     private bool curstate = false;
     private bool laststate = false;
 
     private Mytimer extTimer = new Mytimer();
+    private Mytimer delayTimer = new Mytimer();
 
-    // 新增：Double Trigger 状态机
-    private enum TriggerState
-    {
-        IDLE,        // 闲置：等待第一次按下
-        WAITING,     // 等待中：第一次按下后，计时窗口内
-        TRIGGERED    // 触发成功：窗口内第二次按下
-    }
-    private TriggerState triggerState = TriggerState.IDLE;
-
+ 
     public void Tick(bool input)
     {
 
@@ -31,9 +28,10 @@ public class MyButton
         //    extTimer.duration = 1.0f;
         //    extTimer.Go();
         //}由startTimer方法代替
-        //1.仅推进计时器
+        //1.仅推进计时器（两个）
         extTimer.Tick();
-        
+        delayTimer.Tick();
+
         //2.更新当前按钮状态
         curstate = input;
         IsPressing = curstate;
@@ -42,54 +40,40 @@ public class MyButton
         OnPressed = false;
         OnReleased = false;
         
+
+        
         //4.判断按钮状态变化
         if (curstate != laststate)
         {
             if (curstate == true)
             {//按钮按下，标记OnPressed,停止计时器
                 OnPressed = true;
-                HandleDoubleTrigger(); // 按下时处理Double Trigger逻辑
+                StartTimer(delayTimer, delayingDuration);
+                extTimer.Stop();
             }
             else
             {//按钮松开，标记OnReleased,启动计时器
                 OnReleased = true;
-                
+                StartTimer(extTimer, extendingDuration);
+                delayTimer.Stop();
             }
         }
         laststate = curstate;
 
 
-        if (extTimer.state == Mytimer.STATE.FINISHED)
-        {
-            triggerState = TriggerState.IDLE;
-            IsExtending = false;
-        }
-      
+        //if (extTimer.state == Mytimer.STATE.RUN)
+        //{ 
+        //    IsExtending = true;
+        //}
+        //if (delayTimer.state == Mytimer.STATE.FINISHED)
+        //{ 
+        //    IsDelaying = true;
+        //}
+        IsExtending = (extTimer.state == Mytimer.STATE.RUN);
+        IsDelaying = (delayTimer.state == Mytimer.STATE.FINISHED);
+
     }
-
-    private void HandleDoubleTrigger()
-    {
-        switch (triggerState)
-        {
-            case TriggerState.IDLE:
-                // 第一次按下：启动1秒计时，进入等待状态，IsExtending=false
-                StartTimer(extTimer, 1.0f);
-                triggerState = TriggerState.WAITING;
-                IsExtending = false;
-                break;
-
-            case TriggerState.WAITING:
-                // 第二次按下：IsExtending=true
-                triggerState = TriggerState.TRIGGERED;
-                IsExtending = true;
-                break;
-
-            case TriggerState.TRIGGERED:
-                // 已经触发成功
-                break;
-        }
-    }
-
+    
     private void StartTimer(Mytimer timer,float duration)
     { 
         timer.duration = duration;
