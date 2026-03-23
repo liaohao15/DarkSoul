@@ -24,8 +24,8 @@ public class JoystickInput : BaseUserInput
     public MyButton buttonD = new MyButton();
     public MyButton buttonLB = new MyButton();
     public MyButton buttonLT = new MyButton();
-
-
+    //记录上一帧的IsExtending状态
+    private bool lastAExtending;
 
     //[Header("===  Joystick signal  ===")]
     //public float Dup;//当前前后输入值
@@ -65,8 +65,12 @@ public class JoystickInput : BaseUserInput
         buttonLB.Tick(Input.GetButton(btnLB));
         buttonLT.Tick(Input.GetButton(btnLT));
 
-
-        print(buttonA.IsExtending);
+        if (buttonA.IsExtending != lastAExtending)
+        {
+            print($"buttonA.IsExtending: {buttonA.IsExtending}");
+            lastAExtending = buttonA.IsExtending; // 更新上一帧状态
+        }
+        //print(buttonA.IsExtending);
         //print(btnx.IsPressing);
         //print(btnx.OnPressed);
         //print(btnx.OnReleased);

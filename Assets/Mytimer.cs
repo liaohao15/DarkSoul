@@ -5,22 +5,22 @@ using UnityEngine;
 
 public class Mytimer
 {
-    public enum STATE
+    public enum STATE//状态
     { 
         IDLE,
         RUN,
         FINISHED
 
     }
-    public STATE state;
+    public STATE state;//对应枚举变量
 
-    public float duration = 1.0f;
+    public float duration = 1.0f;//计算时间
 
-    private float elapsedTime = 0;
+    private float elapsedTime = 0;//流失的时间
 
-    public void Tick()
+    public void Tick()//推进这套代码
     {
-        if (state == STATE.IDLE)
+        if (state == STATE.IDLE)//闲置状态，啥也不用做
         {
 
         }
