@@ -94,20 +94,27 @@ public class ActorController : MonoBehaviour
 
         }
 
-        //2.跳跃
-        if (pi.jump && isGround)
-        {
-            anim.SetTrigger("jump");
-        }
-        /*
-         * 这里有一个类与对象的成员访问（pi是PlayerInput里的一个实例；jump是PlayerInput里的字段）
-         */
+        ////2.跳跃
+        //if (pi.jump && isGround)
+        //{
+        //    anim.SetTrigger("jump");
+        //}
+        ///*
+        // * 这里有一个类与对象的成员访问（pi是PlayerInput里的一个实例；jump是PlayerInput里的字段）
+        // */
 
-        //3.落地翻滚在Ingroud里面
-        //3.下落翻滚
-        if (rigid.velocity.magnitude > 1.6f && isGround)
+        ////3.落地翻滚在Ingroud里面
+        ////3.下落翻滚
+        //if (rigid.velocity.magnitude > 1.6f && isGround)
+        //{
+        //    anim.SetTrigger("roll");
+        //}
+
+        // 翻滚/后撤触发
+        if (pi.roll && isGround || rigid.velocity.magnitude >7.0f )
         {
             anim.SetTrigger("roll");
+            canAttack = false;
         }
 
         //4.攻击

@@ -11,10 +11,11 @@ public class MyButton
     public bool IsDelaying = false;//长按信号
 
     public float extendingDuration = 0.3f;//拓展持续时间
-    public float delayingDuration = 1.0f;//长按持续时间
+    public float delayingDuration = 0.2f;//长按持续时间
 
     private bool curstate = false;
     private bool laststate = false;
+    public bool isLongPress =  false;//用来记录按压是不是长按
 
     private Mytimer extTimer = new Mytimer();
     private Mytimer delayTimer = new Mytimer();
@@ -39,16 +40,21 @@ public class MyButton
         //3.重置单次触发的状态
         OnPressed = false;
         OnReleased = false;
-        
 
-        
-        //4.判断按钮状态变化
+        // 4. 先更新状态（关键顺序）
+        IsDelaying = (delayTimer.state == Mytimer.STATE.FINISHED);
+        IsExtending = (extTimer.state == Mytimer.STATE.RUN);
+
+
+
+        //5.判断按钮状态变化
         if (curstate != laststate)
         {
             if (curstate == true)
             {//按钮按下，标记OnPressed,停止计时器
                 OnPressed = true;
                 StartTimer(delayTimer, delayingDuration);
+                isLongPress = false;
                 extTimer.Stop();
             }
             else
@@ -69,8 +75,12 @@ public class MyButton
         //{ 
         //    IsDelaying = true;
         //}
-        IsExtending = (extTimer.state == Mytimer.STATE.RUN);
-        IsDelaying = (delayTimer.state == Mytimer.STATE.FINISHED);
+        // 6. 最后记录长按状态
+        if (delayTimer.state == Mytimer.STATE.FINISHED)
+        {
+            isLongPress = true;
+        }
+
 
     }
     

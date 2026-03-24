@@ -58,6 +58,7 @@ public class JoystickInput : BaseUserInput
     // 修改一下，将原来的update()里的逻辑修改成这样
     void Update()
     {
+        //1.更新按键状态
         buttonA.Tick(Input.GetButton(btnA));
         buttonB.Tick(Input.GetButton(btnB));
         buttonC.Tick(Input.GetButton(btnC));
@@ -75,17 +76,18 @@ public class JoystickInput : BaseUserInput
         //print(btnx.OnPressed);
         //print(btnx.OnReleased);
 
-        // ==============         控制摄像机              ================
+        // ==============         2.控制摄像机              ================
         Jup = (Input.GetAxis(axisJup));
         //print(Jup);
         Jright = (Input.GetAxis(axisJright));
         //print(Jright);
 
-        // =============            控制方向向量     ===============
+        // =============            3.控制移动方向     ===============
         //把按键转化为目标值
         TargetDup = (Input.GetAxis(axisY));
         TargetDturn = (Input.GetAxis(axisX));
 
+        //4.移动方向输入
         if (InputEnable == false)//使用InputEnable开关来控制玩家的输入功能
         {
             TargetDturn = 0;
@@ -93,7 +95,7 @@ public class JoystickInput : BaseUserInput
 
         }
 
-        //(平滑输入)第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
+        //5.(平滑输入)第一个参数是当前值，第二个数是目标值，第三个数是速度引用（引用参数而不是实数）,第四个数是平滑时间
         Dup = Mathf.SmoothDamp(Dup, TargetDup, ref VelocityDup, 0.1f);
         Dturn = Mathf.SmoothDamp(Dturn, TargetDturn, ref VelocityDturn, 0.1f);//平滑输入是为了，更好的与动作动画搭配
 
@@ -105,10 +107,11 @@ public class JoystickInput : BaseUserInput
         dL = Mathf.Sqrt((Dup2 * Dup2) + (Dturn2 * Dturn2));//角色的速度大小
         dV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
 
-
+        //   ======   6.动作信号   ======
         //run = Input.GetButton(btnA);//控制跑步按键
         //优化跑步按键
         run = (buttonA.IsPressing && buttonA.IsDelaying) || buttonA.IsExtending;
+        roll = (buttonA.OnReleased && !buttonA.isLongPress) || (buttonA.OnPressed && buttonA.IsExtending);
 
         //defense = Input.GetButton(btnLB);//控制防御动作
         //优化防御动作
@@ -127,7 +130,7 @@ public class JoystickInput : BaseUserInput
         //}
         //Lastjump = newJump;
         //优化跳跃信号
-        jump = buttonB.OnPressed;
+        
 
 
         //      ======   设置攻击信号和控制攻击次数   ======

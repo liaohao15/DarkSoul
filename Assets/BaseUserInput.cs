@@ -17,8 +17,10 @@ public abstract class BaseUserInput : MonoBehaviour
     public bool defense;//防御状态
 
     //Trigger signal
+    
     public bool jump;//通过对jump的判断来触发触发器
     protected bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
+    public bool roll;//翻滚/后撤信号
     public bool attack;//通过对attack的判断来触发触发器
     protected bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
 
