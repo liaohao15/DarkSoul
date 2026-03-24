@@ -17,6 +17,9 @@ public class CameraController : MonoBehaviour
 
     private GameObject model;
     public Camera maincamera;
+    
+    [SerializeField]
+    private GameObject lockTarget;
 
     void Awake()
     {
@@ -67,7 +70,25 @@ public class CameraController : MonoBehaviour
 
     public void LockUnlock()
     {
-        print("lockUnlock");
+        //print("lockUnlock");
+        if (lockTarget == null)
+        {
+            //try to lock
+            Vector3 modelOrigin1 = model.transform.position;
+            Vector3 modelOrigin2 = modelOrigin1 + new Vector3(0, 1, 0);
+            Vector3 boxCenter = modelOrigin2 + model.transform.forward * 5.0f;
+            Collider[] cols = Physics.OverlapBox(boxCenter, new Vector3(0.5f, 0.5f, 5f),model.transform.rotation,LayerMask.GetMask("Enemy"));
+            foreach (var col in cols)
+            {
+                //print(col.name);
+                lockTarget = col.gameObject;
+                break;
+            }
+        }
+        else
+        {
+            lockTarget = null;
+        }
     }
 
 }
