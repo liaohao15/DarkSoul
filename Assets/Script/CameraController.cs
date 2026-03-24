@@ -64,4 +64,10 @@ public class CameraController : MonoBehaviour
             Time.deltaTime * 5f  // 旋转平滑速度，数值越大转向越快
         );
     }
+
+    public void LockUnlock()
+    {
+        print("lockUnlock");
+    }
+
 }

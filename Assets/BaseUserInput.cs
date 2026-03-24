@@ -23,6 +23,7 @@ public abstract class BaseUserInput : MonoBehaviour
     public bool roll;//翻滚/后撤信号
     public bool attack;//通过对attack的判断来触发触发器
     protected bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
+    public bool lockon;
 
 
     public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入

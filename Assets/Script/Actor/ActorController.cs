@@ -11,6 +11,7 @@ public class ActorController : MonoBehaviour
     public GameObject model;//抓取要控制的模型
     //public PlayerInput pi;//调用PlayerInput脚本。修改成手柄输入
     public BaseUserInput pi;
+    public CameraController camlock;
 
     [SerializeField]
     private Animator anim;//获取组件Animator
@@ -125,6 +126,12 @@ public class ActorController : MonoBehaviour
 
         //5.防御
         anim.SetBool("defense", pi.defense);
+
+        //6.锁敌
+        if (pi.lockon)
+        {
+            camlock.LockUnlock();
+        }
 
     }
     private void FixedUpdate()
@@ -296,6 +303,8 @@ public class ActorController : MonoBehaviour
             deltaPos += (deltaPos + (Vector3)_deltaPos)/2;
         }
     }
+
+ 
 
 }
 

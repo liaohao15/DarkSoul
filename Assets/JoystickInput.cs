@@ -15,6 +15,7 @@ public class JoystickInput : BaseUserInput
     public string axisJright= "axis4";
     public string btnLB = "btn4";
     public string btnLT = "btn6";
+    public string btnJstick = "btn11";
 
     public MyButton btnx = new MyButton(); 
 
@@ -24,6 +25,8 @@ public class JoystickInput : BaseUserInput
     public MyButton buttonD = new MyButton();
     public MyButton buttonLB = new MyButton();
     public MyButton buttonLT = new MyButton();
+    public MyButton buttonJstick = new MyButton();
+
     //记录上一帧的IsExtending状态
     private bool lastAExtending;
 
@@ -65,6 +68,8 @@ public class JoystickInput : BaseUserInput
         buttonD.Tick(Input.GetButton(btnD));
         buttonLB.Tick(Input.GetButton(btnLB));
         buttonLT.Tick(Input.GetButton(btnLT));
+        buttonJstick.Tick(Input.GetButton(btnJstick));
+        //print(buttonJstick.OnPressed);
 
         if (buttonA.IsExtending != lastAExtending)
         {
@@ -148,6 +153,7 @@ public class JoystickInput : BaseUserInput
         //}
         //优化攻击信号
         attack = buttonC.OnPressed;
+        lockon = buttonJstick.OnPressed;
     }
 
 
