@@ -623,6 +623,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: {fileID: 643145857}
   pi: {fileID: 0}
+  PlayerHandle: {fileID: 598978746}
   camlock: {fileID: 963194229}
   anim: {fileID: 0}
   rigid: {fileID: 0}
@@ -1119,9 +1120,11 @@ MonoBehaviour:
   pi: {fileID: 643145863}
   horizontalSpeed: 200
   verticalSpeed: 80
+  cameraDamp: 0.2
   PlayerHandle: {fileID: 598978746}
   CameraHandle: {fileID: 124321774}
   maincamera: {fileID: 963194227}
+  lockTarget: {fileID: 0}
 --- !u!4 &1001442481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}

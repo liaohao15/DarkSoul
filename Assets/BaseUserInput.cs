@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class BaseUserInput : MonoBehaviour
 {
+    #region 这是一个抽象基类，他是所有输入方式的“模版”，它把不同输入方式（键盘或手柄），共通要做的东西（前后左右输入、跳跃信号），这些方法都抽出来放在基类（爸爸）这里
+    #region 字段定义（数据封装），定义所有输入方式共通的数据变量
     [Header("===  Joystick signal  ===")]
     public float Dup;//当前前后输入值
     public float Dturn;//当前左右输入值
@@ -12,14 +14,16 @@ public abstract class BaseUserInput : MonoBehaviour
     public float VelocityDup;// 调用Mathf.SmoothDamp方法时的速度参数，不赋值
     public float VelocityDturn;
 
-    //Pressing signal
+    //Pressing signal（持续按压型）
     public bool run;//跑步状态
     public bool defense;//防御状态
 
-    //Trigger signal
+    //Trigger signal（触发型，只在按下/松开的那一帧有效）
     
     public bool jump;//通过对jump的判断来触发触发器
+    #region protected:受保护的访问修饰符：只有“自己”和“继承自己的子类”能访问，外部和别的类不行
     protected bool Lastjump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
+    #endregion
     public bool roll;//翻滚/后撤信号
     public bool attack;//通过对attack的判断来触发触发器
     protected bool Lastattack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
@@ -34,7 +38,7 @@ public abstract class BaseUserInput : MonoBehaviour
     [Header("=== other  === ")]
     public float dL;//(Direction Magnitude)方向模长
     public Vector3 dV;//(Direction Vector)方向向量
-
+    #endregion 
 
     [Header("===   cameraConroller")]//这里我们是用来对Camera进行控制的
     public KeyCode KeyJup;
@@ -73,5 +77,6 @@ public abstract class BaseUserInput : MonoBehaviour
             Jright = ((Input.GetKey(KeyJright) ? 1.0f : 0) - (Input.GetKey(KeyJleft) ? 1.0f : 0));
             print(Jright);
         }
-    } 
+    }
+    #endregion
 }
