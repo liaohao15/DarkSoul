@@ -17,18 +17,15 @@ public class MyButton
     private bool laststate = false;
     public bool isLongPress =  false;//用来记录按压是不是长按
 
+    #region 在button内部创建两个计时器
     private Mytimer extTimer = new Mytimer();
     private Mytimer delayTimer = new Mytimer();
+    #endregion
 
- 
     public void Tick(bool input)
     {
 
-        //if (Input.GetKeyDown(KeyCode.P))
-        //{
-        //    extTimer.duration = 1.0f;
-        //    extTimer.Go();
-        //}由startTimer方法代替
+       
         //1.仅推进计时器（两个）
         extTimer.Tick();
         delayTimer.Tick();
@@ -67,14 +64,7 @@ public class MyButton
         laststate = curstate;
 
 
-        //if (extTimer.state == Mytimer.STATE.RUN)
-        //{ 
-        //    IsExtending = true;
-        //}
-        //if (delayTimer.state == Mytimer.STATE.FINISHED)
-        //{ 
-        //    IsDelaying = true;
-        //}
+        
         // 6. 最后记录长按状态
         if (delayTimer.state == Mytimer.STATE.FINISHED)
         {

@@ -1,88 +1,78 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class ActorController : MonoBehaviour
 {
-   
 
+    #region 这些都是引用类型字段，存的是对象的地址
     public GameObject model;//抓取要控制的模型
     //public PlayerInput pi;//调用PlayerInput脚本。修改成手柄输入
     public BaseUserInput pi;
     public GameObject PlayerHandle;
     public CameraController camlock;
-
     [SerializeField]
     private Animator anim;//获取组件Animator
     [SerializeField]
     private Rigidbody rigid;//获取刚体
+    private CapsuleCollider col;//获取胶囊碰撞体
+    #endregion
 
+    #region  定义的变量
     public float movingSpeed = 1.0f; //基础速度
     private float RunMultiplier = 2.0f;//当跑步键按下时，乘以这个速度倍率
-
     public Vector3 JumpImpulse;//向上跳跃的冲量
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
-    //public float JabHight = 2.0f;//后跳的高度      不需要这个了，有curigidur曲线控制就够了
-
     [Space(10)] 
     [Header("   === Friction ===   ")]
     public PhysicMaterial frictionZero;//摩擦系数为0
-
     public PhysicMaterial frictionOne;//摩擦系数为1
-
-
-    private bool isGround = true;//标记是否在地面（由GroundSensor设置）
-
     private Vector3 CharacterTurn;//为角色转向而设计的变量
     private float RunTurn;//为动画切换而设计的变量
-
     private Vector3 planVc;//角色移动的最终量
-
-    private bool PlanLock;
-
-    bool canAttack;//攻击进行的第三个条件
-    private CapsuleCollider col;//获取胶囊碰撞体
-
     public float targetValue;
-
     private Vector3 deltaPos;
+    #endregion
 
+    #region 这三个是状态变量
+    private bool isGround = true;//标记是否在地面（由GroundSensor设置）
+    private bool PlanLock;
+    bool canAttack;//攻击进行的第三个条件
+    #endregion
+
+
+    #region Awake()_获取组件
     // Start is called before the first frame update
     void Awake()
     { //                         ============     获取当前物体的组件   ===================
         anim = model.GetComponent<Animator>();
-        //pi = GetComponent<PlayerInput>();修改成手柄输入
-        //这个代码是用来控制输入选择的，但是他只在Awake阶段进行一次
-        BaseUserInput[] inputs = GetComponents<BaseUserInput>();//继续修改用，抽象类来分装
-        foreach (var input in inputs)
-        {
-            if (input.enabled == true)
-            {
-                pi = input;
-                break;
-            }
-        }
 
+        RefreshInput();
+        if (pi == null)
+        {
+             Debug.LogError("未找到输入组件");
+        }
 
         rigid = GetComponent<Rigidbody>();
         col = GetComponent<CapsuleCollider>();
     }
+    #endregion
 
     // Update is called once per frame
     void Update()
     {
         RefreshInput();//一运行，就进行一次输入源的选择
-        //                             ===========   转向转换缓冲区      ============
-        //1.动画转换缓冲
+                       //                             ===========   转向转换缓冲区      ============
+        #region 1.动画转换缓冲
         RunTurn = ((pi.run) ? 2.0f : 1.0f);
         anim.SetFloat("forward", pi.dL * Mathf.Lerp(anim.GetFloat("forward"), RunTurn, 0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
+        #endregion
 
-        //2.人物转向缓冲
+        #region 2.人物转向缓冲
         if (camlock.lockTarget == null)
         {
             if (pi.dL > 0.1f) //添加这个判断，是为了，避免当玩家没有输入时，他的TargetDug和TargetDturn的变为零，导致角色的面朝方向变为0,0
@@ -92,10 +82,10 @@ public class ActorController : MonoBehaviour
                 model.transform.forward = CharacterTurn;
             }
         }
-        
+        #endregion
 
         //                  ==================     移动   ==================
-        //1.移动，还使用到FixedUpdate方法
+        #region  1.移动，还使用到FixedUpdate方法
         if (PlanLock == false)
         {
             if (camlock.lockTarget == null)
@@ -111,53 +101,43 @@ public class ActorController : MonoBehaviour
                 print($"锁敌移动：Dturn={pi.Dturn}, Dup={pi.Dup}, planVc={planVc}");
             }
         }
+        #endregion
 
-        ////2.跳跃
-        //if (pi.jump && isGround)
-        //{
-        //    anim.SetTrigger("jump");
-        //}
-        ///*
-        // * 这里有一个类与对象的成员访问（pi是PlayerInput里的一个实例；jump是PlayerInput里的字段）
-        // */
-
-        ////3.落地翻滚在Ingroud里面
-        ////3.下落翻滚
-        //if (rigid.velocity.magnitude > 1.6f && isGround)
-        //{
-        //    anim.SetTrigger("roll");
-        //}
-
-        // 翻滚/后撤触发
-        if (pi.roll && isGround || rigid.velocity.magnitude >7.0f )
+        #region 2.翻滚触发
+        if ((pi.roll && isGround) || rigid.velocity.magnitude >7.0f )
         {
             anim.SetTrigger("roll");
             canAttack = false;
         }
+        #endregion
 
-        //4.攻击
+        #region 3.攻击
         if (pi.attack && CheckState("ground") && isGround && canAttack )
         {
             anim.SetTrigger("attack");
         }
+        #endregion
 
-        //5.防御
+        #region 4.防御
         anim.SetBool("defense", pi.defense);
+        #endregion
 
-        //6.锁敌
+        #region 5.索敌
         if (pi.lockon)
         {
             camlock.LockUnlock();
         }
+        #endregion
 
     }
     private void FixedUpdate()
     {
+        #region 处理物理移动
         rigid.position += deltaPos;
         //1.物理移动：把输入的移动向量赋值给刚体速度
         if (pi.attack)
         {
-            rigid.velocity = new Vector3(0, 0, 0);
+            rigid.velocity = new Vector3(0, 0, 0);//攻击时停止
         }
         else 
         {
@@ -167,7 +147,7 @@ public class ActorController : MonoBehaviour
         //2.用完冲量后清空，避免持续施加
         JumpImpulse = Vector3.zero;
         deltaPos = Vector3.zero;
-
+        #endregion 
     }
 
     //      ======   用来检测Animator的层级   ======
@@ -197,6 +177,8 @@ public class ActorController : MonoBehaviour
     //                          ******************************  信息接收区    *************************************
     //                              ==================      跳跃动作状态的显示     ============================
     //由动画状态机触发的跳跃逻辑（FSMOnEnter发消息调用）
+
+    #region 动画回调方法
     public void OnJumpEnter()
     {
         pi.InputEnable = false;
@@ -213,7 +195,7 @@ public class ActorController : MonoBehaviour
         JumpImpulse = new Vector3(0, RollHight, 0);
         canAttack = false;
     }
-
+    #endregion
     //                              ==================      后跳动作状态的显示     ============================
     public void OnJabEnter()
     {
@@ -276,8 +258,6 @@ public class ActorController : MonoBehaviour
         pi.InputEnable = false;
         PlanLock = true;
         targetValue = 1.0f;//缓冲调整攻击的目标值
-       
-
     }
 
     public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点

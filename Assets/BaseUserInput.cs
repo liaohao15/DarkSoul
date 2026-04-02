@@ -51,7 +51,7 @@ public abstract class BaseUserInput : MonoBehaviour
     public float mouseSensitivityX = 1f;
     public float mouseSensitivityY = 1f;
 
-
+    #region public方法，返回值是Vector2,参数也是 Vector2
     public Vector2 SqureToCircle(Vector2 input)//这个方法就是用来将平面的二维坐标转化为圆面的二维坐标
     {
         Vector2 output = Vector2.zero;
@@ -59,7 +59,9 @@ public abstract class BaseUserInput : MonoBehaviour
         output.y = input.y * Mathf.Sqrt(1 - input.x * input.x / 2);
         return output;
     }
+    #endregion
 
+    #region update方法，每帧调用一次（大约60次/秒）
     void Update()
     {
 
@@ -78,5 +80,6 @@ public abstract class BaseUserInput : MonoBehaviour
             print(Jright);
         }
     }
+    #endregion
     #endregion
 }
