@@ -8,11 +8,13 @@ using UnityEngine;
 //负责：输入接收、移动、动画、物理、动作逻辑
 public class ActorController : MonoBehaviour
 {
+    [Header("角色引用绑定")]
     public GameObject Model;//抓取要控制的模型
     public BaseUserInput Pi;//输入系统基类
     public GameObject PlayerHandle;//角色手柄对象
     public CameraController Camlock;//相机锁定控制器
-    
+
+    [Header("核心组件")]
     [SerializeField]
     private Animator Anim;//获取组件Animator
     [SerializeField]
@@ -25,26 +27,27 @@ public class ActorController : MonoBehaviour
     public Vector3 JumpImpulse;//向上跳跃的冲量
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
+    
     [Space(10)] 
-    [Header("   === Friction ===   ")]
-    //系数
+    [Header("地面摩擦材质")]
     public PhysicMaterial FrictionZero;//摩擦系数为0
     public PhysicMaterial FrictionOne;//摩擦系数为1
-    //权重
+
+    [Header("内部缓存变量")]
     private Vector3 CharacterTurn;//角色转向缓存向量
     private float RunTurn;//跑步/走路动画切换参数
     private Vector3 planVc;//最终移动向量
     public float TargetValue;//动画层权重目标值
     private Vector3 DeltaPos;//位置修正偏移量
 
-    //角色状态标记
+    [Header("角色状态标记")]
     private bool IsGround = true;//标记是否在地面（由GroundSensor设置）
     private bool PlanLock;//移动锁定开关
     bool CanAttack;//是否可以攻击
 
-    //获取组件
+    //获取组件、初始化
     void Awake()
-    { //                         ============     获取当前物体的组件   ===================
+    { //获取当前物体的组件
         Anim = Model.GetComponent<Animator>();
 
         RefreshInput();//刷新输入源
@@ -54,6 +57,7 @@ public class ActorController : MonoBehaviour
         {
              Debug.LogError("未找到输入组件");
         }
+
         //获取自身刚体和碰撞体
         Rigid = GetComponent<Rigidbody>();
         Col = GetComponent<CapsuleCollider>();
@@ -63,24 +67,56 @@ public class ActorController : MonoBehaviour
     void Update()
     {
         RefreshInput();//刷新输入源
-                       //                             ===========   转向转换缓冲区      ============
-        //动画平滑过渡：跑步/走路切换
-        RunTurn = ((Pi.Run) ? 2.0f : 1.0f);
-        Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));//Mathf.Lerp(线性插值)让动画参数"forward"在走路和跑步之间平滑过渡的，实际上是由1增加到2
-        //角色转向：无锁定目标时，根据移动方向平滑转向
+
+        //1.动画逻辑
+        //计算走路/跑步切换倍率
+        float moveInputMagnitude = Mathf.Clamp01(Mathf.Sqrt(Pi.Dup * Pi.Dup + Pi.Dturn * Pi.Dturn));
+        // 推幅>0.8算跑步，否则走路
+        RunTurn = moveInputMagnitude > 0.8f ? 2.0f : 1.0f;
+
         if (Camlock.LockTarget == null)
         {
-            if (Pi.DL > 0.1f) //添加这个判断，是为了，避免当玩家没有输入时，他的TargetDug和TargetDturn的变为零，导致角色的面朝方向变为0,0
-            {
+            //无锁敌时:沿用原始动画逻辑
+            Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));
+        }
+        else 
+        {
+            //锁敌状态：修复动画错位，只播放前后移动动画
+            Vector3 MoveDir = planVc.normalized;
+            //点积：判断移动方向和角色面朝方向的前后关系
+            float forwardComponent = Vector3.Dot(MoveDir, Model.transform.forward);
+            //取绝对值，后撤也播放走路动画
+            float forwardAnimValue = Mathf.Abs(forwardComponent) * RunTurn;
+            //平滑赋值动画参数
+            Anim.SetFloat("forward", Mathf.Lerp(Anim.GetFloat("forward"), forwardAnimValue, 0.3f));
+        }
 
-                CharacterTurn = Vector3.Slerp(Model.transform.forward, Pi.DV, 0.5f);//Vector3.Slerp（ 球面插值）是用来做人物转向缓冲的
+        //2.角色转向
+        if (Camlock.LockTarget == null)
+        {
+            // 无锁敌：按移动方向转向
+            if (Pi.DL > 0.1f)
+            {
+                //球面插值平滑转向
+                CharacterTurn = Vector3.Slerp(Model.transform.forward, Pi.DV, 0.5f);
                 Model.transform.forward = CharacterTurn;
             }
         }
-        //角色移动逻辑：未锁定移动时计算移动方向    
+        else
+        {
+            // 锁敌：角色始终平滑面朝敌人
+            Vector3 TargetDir = Camlock.LockTarget.transform.position - Model.transform.position;
+            TargetDir.y = 0;
+            if (TargetDir.magnitude > 0.1f)
+            {
+                Model.transform.forward = Vector3.Slerp(Model.transform.forward, TargetDir, 0.5f);
+            }
+        }
+
+        //3.移动逻辑
         if (PlanLock == false)
         {
-            //无锁定目标：模型朝向移动
+            //无锁定目标：按移动方向转向
             if (Camlock.LockTarget == null)
             {
                 planVc = Pi.DL * Model.transform.forward * MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
@@ -89,15 +125,23 @@ public class ActorController : MonoBehaviour
             //有锁定目标：相机朝向移动
             else
             {
-                planVc = PlayerHandle.transform.TransformDirection(Pi.Dturn, 0, Pi.Dup);
+                //有锁定目标：以相机前后左右为移动方向
+                Vector3 CamForward = Camlock.Maincamera.transform.forward;
+                Vector3 CamRight = Camlock.Maincamera.transform.right;
+                CamForward.y = 0; CamForward.y = 0;//置平，忽略上下高度
+                CamRight.y = 0;
+                CamForward.Normalize();
+                CamRight.Normalize();
+
+                //摇杆输入映射相机方向
+                planVc = (CamForward * Pi.Dup + CamRight * Pi.Dturn).normalized;
+                //叠加速度和跑步倍率
                 planVc *= MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);
-                planVc.y = 0;
-                print($"锁敌移动：Dturn={Pi.Dturn}, Dup={Pi.Dup}, planVc={planVc}");
             }
         }
 
         //防滚触发：地面+按键 或者 高速移动时
-        if ((Pi.Roll && IsGround) || Rigid.velocity.magnitude > 7.0f)
+        if (Pi.Roll && IsGround)
         {
             Anim.SetTrigger("roll");
             CanAttack = false;
@@ -163,7 +207,6 @@ public class ActorController : MonoBehaviour
         }
         
     }
-
 
     // ===  动画回调方法 ===
     //==人物动作==

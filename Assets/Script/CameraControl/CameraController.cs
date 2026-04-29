@@ -53,11 +53,14 @@ public class CameraController : MonoBehaviour
     //固定物理帧更新相机
     void FixedUpdate()
     {
+        // 空值安全防护
+        if (Model == null || Maincamera == null || CameraHandle == null || Pi == null) return;
+
+
         //无锁定目标：自由旋转相机 
         if (LockTarget == null)
         {
-            //记录角色当前朝向，防止相机旋转带动角色转身
-            Vector3 tempModelEuler = Model.transform.eulerAngles;
+            //未锁定：正常相机控制
 
             //水平旋转：鼠标/手柄左右输入
             TempEulerY += Pi.Jright * HorizontalSpeed * Time.fixedDeltaTime;
@@ -68,27 +71,34 @@ public class CameraController : MonoBehaviour
 
             //应用相机旋转
             CameraHandle.transform.localEulerAngles = new Vector3(TempEulerX, TempEulerY, 0);//垂直+水平
-
-            //恢复角色原朝向
-            Model.transform.eulerAngles = tempModelEuler;//赋值现在的相机的位置以及欧拉角
         }
         //有锁定目标：锁敌视角
         else
         { 
-            // 计算角色指向敌人的方向，只保留水平方向（忽略高度）
-            Vector3 tempForward = LockTarget.transform.position - Model.transform.position;
-            tempForward.y = 0;
-            // 让角色父物体自动朝向敌人，实现锁敌时角色始终面对敌人
-            Model.transform.forward = tempForward;
+            //锁定：相机看向敌人，不修改角色朝向
 
-            // 锁敌时重置垂直角度，保持摄像机水平
+            // 计算角色指向敌人的方向，只保留水平方向（忽略高度）
+            Vector3 Dir = LockTarget.transform.position - CameraHandle.transform.position;
+            Dir.y = 0;
+            Quaternion TargetRot = Quaternion.LookRotation(Dir);
+
+            //相机平滑看向敌人
+            CameraHandle.transform.rotation = Quaternion.Lerp(
+                CameraHandle.transform.rotation,
+                TargetRot,
+                0.1f);
+
+
+            // 锁敌时保持摄像机水平
             TempEulerX = Mathf.Lerp(TempEulerX, 0, Time.fixedDeltaTime * 5f);
-            CameraHandle.transform.localEulerAngles = new Vector3(TempEulerX, 0, 0);
-            TempEulerY = 0;
+            TempEulerY = CameraHandle.transform.eulerAngles.y;
         }
     
         //主相机平滑跟随目标位置
-        Maincamera.transform.position = Vector3.SmoothDamp(Maincamera.transform.position, transform.position, ref CameraDampVelocity,CameraDamp);//让主摄像机平滑地移动到相机位置以及角度
+        Maincamera.transform.position = Vector3.SmoothDamp(
+            Maincamera.transform.position, 
+            transform.position, 
+            ref CameraDampVelocity,CameraDamp);//让主摄像机平滑地移动到相机位置以及角度
         //主相机始终看向相机手柄
         Maincamera.transform.LookAt(CameraHandle.transform);
     }
