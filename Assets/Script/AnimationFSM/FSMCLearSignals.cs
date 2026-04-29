@@ -4,52 +4,29 @@ using UnityEngine;
 
 public class FSMCLearSignals : StateMachineBehaviour
 {
-    //          =======================       定义两组数组      ==============================
-    public string[] clearEnterSignals; 
-    public string[] clearExitSignals;
+    //进入状态时要清空的触发器
+    public string[] ClearEnterSignals; 
 
+    //离开状态时要清空的触发器
+    public string[] ClearExitSignals;
 
-    //          =======================       进入状态执行一次       ==============================
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+    //==   进入状态执行一次     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        foreach (var signal in clearEnterSignals)
+        //循环清空所有进入时需要清理的触发器
+        foreach (var signal in ClearEnterSignals)
         {
             animator.ResetTrigger(signal);//清空
         }
     }
 
-    //          =======================       在状态里执行60次/s       ==============================
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    //          =======================       离开状态执行一次       ==============================
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
+    //== 离开状态执行一次   
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        foreach (var signal in clearExitSignals)//foreach循环把数组里的每一个信号，逐个拿出来进行清空
+        //循环清空所有离开时需要清理的触发器
+        foreach (var signal in ClearExitSignals)//foreach循环把数组里的每一个信号，逐个拿出来进行清空
         {
             animator.ResetTrigger(signal);
         }
     }
-
-
-
-
-
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }

@@ -198,11 +198,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52b0015be5c64c9429af0971db4d467c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cpC: {fileID: 643145859}
-  poinT1: {x: 0, y: -0.02, z: 0}
-  poinT2: {x: 0, y: 0, z: 0}
-  radius: 0.7
-  offest: 0.001
+  CPC: {fileID: 643145859}
+  Point1: {x: 0, y: 0, z: 0}
+  Point2: {x: 0, y: 0, z: 0}
+  Radius: 0
+  Offset: 0.1
 --- !u!4 &399974905 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400114, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}
@@ -583,24 +583,24 @@ MonoBehaviour:
   TargetDturn: 0
   VelocityDup: 0
   VelocityDturn: 0
-  run: 0
-  defense: 0
-  jump: 0
-  roll: 0
-  attack: 0
-  lockon: 0
+  Run: 0
+  Defense: 0
+  Jump: 0
+  Roll: 0
+  Attack: 0
+  LockOn: 0
   InputEnable: 1
   Jup: 0
   Jright: 0
-  dL: 0
-  dV: {x: 0, y: 0, z: 0}
   KeyJup: 273
   KeyJdown: 274
   KeyJleft: 276
   KeyJright: 275
-  mouseEnable: 1
-  mouseSensitivityX: 100
-  mouseSensitivityY: 100
+  MouseEnable: 1
+  MouseSensitivityX: 1
+  MouseSensitivityY: 1
+  DL: 0
+  DV: {x: 0, y: 0, z: 0}
   KeyUp: 119
   KeyDown: 115
   KeyLeft: 97
@@ -621,19 +621,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1874eeb76e74144c830f8a06ef598c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 643145857}
-  pi: {fileID: 0}
+  Model: {fileID: 643145857}
+  Pi: {fileID: 643145863}
   PlayerHandle: {fileID: 598978746}
-  camlock: {fileID: 963194229}
-  anim: {fileID: 0}
-  rigid: {fileID: 0}
-  movingSpeed: 2
+  Camlock: {fileID: 963194229}
+  Anim: {fileID: 643145868}
+  Rigid: {fileID: 643145860}
+  MovingSpeed: 1
   JumpImpulse: {x: 0, y: 0, z: 0}
   JunmpHight: 5
   RollHight: 1.5
-  frictionZero: {fileID: 0}
-  frictionOne: {fileID: 0}
-  targetValue: 0
+  FrictionZero: {fileID: 13400000, guid: baa3bfa1a11332345822ffd1412052de, type: 2}
+  FrictionOne: {fileID: 13400000, guid: d820b6268ead0da4cb9b8c3505219d6b, type: 2}
+  TargetValue: 0
 --- !u!114 &643145863
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -652,35 +652,35 @@ MonoBehaviour:
   TargetDturn: 0
   VelocityDup: 0
   VelocityDturn: 0
-  run: 0
-  defense: 0
-  jump: 0
-  roll: 0
-  attack: 0
-  lockon: 0
+  Run: 0
+  Defense: 0
+  Jump: 0
+  Roll: 0
+  Attack: 0
+  LockOn: 0
   InputEnable: 1
   Jup: 0
   Jright: 0
-  dL: 0
-  dV: {x: 0, y: 0, z: 0}
   KeyJup: 0
   KeyJdown: 0
   KeyJleft: 0
   KeyJright: 0
-  mouseEnable: 1
-  mouseSensitivityX: 100
-  mouseSensitivityY: 100
-  axisX: axisX
-  axisY: axisY
-  btnA: btn0
-  btnB: btn1
-  btnC: btn2
-  btnD: btn3
-  axisJup: axis3
-  axisJright: axis4
-  btnLB: btn4
-  btnLT: btn6
-  btnJstick: btn11
+  MouseEnable: 1
+  MouseSensitivityX: 1
+  MouseSensitivityY: 1
+  DL: 0
+  DV: {x: 0, y: 0, z: 0}
+  AxisX: axisX
+  AxisY: axisY
+  BtnA: btn0
+  BtnB: btn1
+  BtnC: btn2
+  BtnD: btn3
+  AxisJup: axis3
+  AxisJright: axis4
+  BtnLB: btn4
+  BtnLT: btn6
+  BtnJstick: btn11
 --- !u!114 &643145865
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -693,7 +693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e2c6326dd2bced45913b98db4ea4e52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  a: {x: 0, y: -30, z: 0}
+  A: {x: 0, y: 0, z: 0}
 --- !u!114 &643145867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -706,6 +706,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f376364dd1af7b743b390d4212c3998d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &643145868 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}
+  m_PrefabInstance: {fileID: 422274283}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1117,14 +1122,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf79d5791e693524981f8a148e7108d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pi: {fileID: 643145863}
-  horizontalSpeed: 200
-  verticalSpeed: 80
-  cameraDamp: 0.2
+  Pi: {fileID: 643145863}
+  HorizontalSpeed: 80
+  VerticalSpeed: 80
+  CameraDamp: 0.2
   PlayerHandle: {fileID: 598978746}
   CameraHandle: {fileID: 124321774}
-  maincamera: {fileID: 963194227}
-  lockTarget: {fileID: 0}
+  Maincamera: {fileID: 0}
+  LockTarget: {fileID: 0}
 --- !u!4 &1001442481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400016, guid: 2f9d958fbcd96e44ca35a77a15e3187a, type: 3}

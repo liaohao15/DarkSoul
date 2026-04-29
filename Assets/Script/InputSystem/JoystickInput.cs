@@ -6,16 +6,16 @@ public class JoystickInput : BaseUserInput
 {
     [Header("======  (JoystickInput Setting)手柄输入设置 ======")]
     //手柄移动摇杆名称
-    public string AxisX = "AxisX";
-    public string AxisY = "AxisY";
+    public string AxisX = "axisX";
+    public string AxisY = "axisY";
     //手柄功能按键名称
     public string BtnA = "btn0";
     public string BtnB = "btn1";
     public string BtnC = "btn2";
     public string BtnD = "btn3";
     //手柄视角摇杆轴名称
-    public string AxisJup = "Axis3";
-    public string AxisJright= "Axis4";
+    public string AxisJup = "axis3";
+    public string AxisJright= "axis4";
     //手柄肩键/扳机键名称
     public string BtnLB = "btn4";
     public string BtnLT = "btn6";
@@ -89,7 +89,7 @@ public class JoystickInput : BaseUserInput
         Run = (ButtonA.IsPressing && ButtonA.IsDelaying) || ButtonA.IsExtending;
 
         //翻滚：短按释放/长按中断触发
-        Roll = (ButtonA.OnReleased && !ButtonA.isLongPress) || (ButtonA.OnPressed && ButtonA.IsExtending);
+        Roll = (ButtonA.OnReleased && !ButtonA.IsLongPress) || (ButtonA.OnPressed && ButtonA.IsExtending);
 
         //防御：长按触发
         Defense = ButtonLB.IsPressing;

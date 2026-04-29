@@ -4,37 +4,21 @@ using UnityEngine;
 
 public class FSMOnEnter : StateMachineBehaviour
 {
+    //动画状态机消息脚本
+    //功能：进入动画状态时，向上发送自定义消息，调用角色控制器的方法
+    //作用：让动画和游戏逻辑精准同步
+
+    //进入动画状态时，要发送的消息数组
     public string[] OnEnterMessages;
-    // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
+
+    //进入动画状态时自动执行
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        //循环发送所有的消息
         foreach (var msg in OnEnterMessages)
         {
+            //向上级物体发送消息，调用对应名称的方法
             animator.gameObject.SendMessageUpwards(msg);
         }
     }
-
-    // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
-    //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-    //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    
-    //}
-
-    // OnStateMove is called right after Animator.OnAnimatorMove()
-    //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that processes and affects root motion
-    //}
-
-    // OnStateIK is called right after Animator.OnAnimatorIK()
-    //override public void OnStateIK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-    //{
-    //    // Implement code that sets up animation IK (inverse kinematics)
-    //}
 }
