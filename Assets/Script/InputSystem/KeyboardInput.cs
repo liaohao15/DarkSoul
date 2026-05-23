@@ -16,6 +16,8 @@ public class KeyboardInput : BaseUserInput
     public KeyCode KeyB;
     public KeyCode KeyC;
     public KeyCode KeyD;
+    public KeyCode KeyE;
+
 
     protected override void Update()
     {
@@ -55,6 +57,7 @@ public class KeyboardInput : BaseUserInput
         //计算移动方向向量
         DV = Dup2 * Vector3.forward + Dturn2 * Vector3.right;//角色要走的方向
 
+
         //跑步按键
         Run = Input.GetKey(KeyA);
 
@@ -81,6 +84,10 @@ public class KeyboardInput : BaseUserInput
             Attack = false;
         }
         LastAttack = NewAttack;
+
+        //      ======   翻滚：帧状态判断，防止累计   ======
+        
+        
     }
 
     //清空输入

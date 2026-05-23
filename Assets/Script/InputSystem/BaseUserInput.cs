@@ -19,7 +19,7 @@ public abstract class BaseUserInput : MonoBehaviour
     public bool Run;//跑步状态
     public bool Defense;//防御状态
 
-    [Header("===  (Trigger signal)持续按压信号  ===")]//只在按下/松开的那一帧有效
+    [Header("===  (Trigger signal)单次按压信号  ===")]//只在按下/松开的那一帧有效
     public bool Jump;//跳跃
     public bool Roll;//翻滚/后撤
     public bool Attack;//攻击
@@ -28,6 +28,7 @@ public abstract class BaseUserInput : MonoBehaviour
     [Header("===  上一帧按键状态  ===")]
     protected bool LastJump;//在对jump判断之前，增加Lastjump与newJump的判断来控制跳跃次数
     protected bool LastAttack;//在对attack判断之前，增加Lastattack与newattack的判断来控制跳跃次数
+    
 
     [Header("===  全局设置  ===")]
     public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入

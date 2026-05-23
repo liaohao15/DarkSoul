@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 //角色主控制器
 //负责：输入接收、移动、动画、物理、动作逻辑
@@ -13,6 +14,7 @@ public class ActorController : MonoBehaviour
     public BaseUserInput Pi;//输入系统基类
     public GameObject PlayerHandle;//角色手柄对象
 
+
     [Header("核心组件")]
     [SerializeField]
     private Animator Anim;//获取组件Animator
@@ -21,12 +23,13 @@ public class ActorController : MonoBehaviour
     private CapsuleCollider Col;//获取胶囊碰撞体
 
     [Header("角色移动与动作")]
-    public float MovingSpeed = 1.0f; //基础速度
+    public float MovingSpeed = 3.0f; //基础速度
     private float RunMultiplier = 2.0f;//跑步速度倍率
     public Vector3 JumpImpulse;//向上跳跃的冲量
     public float JunmpHight = 5.0f;//向上跳跃的高度
     public float RollHight = 1.5f;//向上翻滚的高度
-    
+    public float JabVelocity = 10.0f;//后撤步的距离
+
     [Space(10)] 
     [Header("地面摩擦材质")]
     public PhysicMaterial FrictionZero;//摩擦系数为0
@@ -38,11 +41,15 @@ public class ActorController : MonoBehaviour
     private Vector3 planVc;//最终移动向量
     public float TargetValue;//动画层权重目标值
     private Vector3 DeltaPos;//位置修正偏移量
+    private Vector3 moveDirection;//移动方向向量
 
     [Header("角色状态标记")]
     private bool IsGround = true;//标记是否在地面（由GroundSensor设置）
     private bool PlanLock;//移动锁定开关
-    bool CanAttack;//是否可以攻击
+    private bool isJumping = false;
+    private bool IsRolling = false;
+    private bool IsJabbing = false;
+    private bool canAttack;
 
     //获取组件、初始化
     void Awake()
@@ -71,40 +78,62 @@ public class ActorController : MonoBehaviour
         //计算走路/跑步切换倍率
         float moveInputMagnitude = Mathf.Clamp01(Mathf.Sqrt(Pi.Dup * Pi.Dup + Pi.Dturn * Pi.Dturn));
         // 推幅>0.8算跑步，否则走路
-        RunTurn = moveInputMagnitude > 0.8f ? 2.0f : 1.0f;
+        RunTurn = (Pi.Run || moveInputMagnitude > 1.0f) ? 2.0f : 1.0f;
 
         Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));
         
         //2.角色转向
        
-        if (Pi.DL > 0.1f)
+        if (Pi.DL > 0.1f && moveDirection != Vector3.zero)
         {
             //球面插值平滑转向
-            CharacterTurn = Vector3.Slerp(Model.transform.forward, Pi.DV, 0.5f);
+            CharacterTurn = Vector3.Slerp(Model.transform.forward,moveDirection, 0.5f);
             Model.transform.forward = CharacterTurn;
         }
 
         //3.移动逻辑
         if (PlanLock == false)
-        {
-            planVc = Pi.DL * Model.transform.forward * MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
+        {   //角色最终要移动的向量
+            //planVc = Pi.DL * Model.transform.forward * MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);
+
+            // 获取主相机的正前方和右方向（忽略 Y 轴，只取水平）
+            Transform cam = Camera.main.transform;
+            Vector3 camForward = cam.forward;
+            Vector3 camRight = cam.right;
+            camForward.y = 0f;
+            camRight.y = 0f;
+            camForward.Normalize();
+            camRight.Normalize();
+
+            // 根据输入计算移动方向（相对于相机）
+            moveDirection = (camForward * Pi.Dup + camRight * Pi.Dturn).normalized;
+
+            // 最终移动向量（保留原有速度倍率）
+            planVc = moveDirection * MovingSpeed * (Pi.Run ? RunMultiplier : 1.0f);
+
         }
 
-        //防滚触发：地面+按键 或者 高速移动时
-        if (Pi.Roll && IsGround)
+        //4.翻滚触发：地面+按键 或者 高速移动时
+        if ( IsGround && Rigid.velocity.magnitude > 1.2f && Pi.Jump)
         {
             Anim.SetTrigger("roll");
-            CanAttack = false;
+
         }
 
-        //攻击触发：满足所有条件才可以攻击
-        if (Pi.Attack && CheckState("ground") && IsGround && CanAttack )
+        //5.攻击触发：满足所有条件才可以攻击
+        if (Pi.Attack && CheckState("ground") && canAttack )
         {
             Anim.SetTrigger("attack");
         }
 
-        //防御动画：按键状态同步
+        //6.防御动画：按键状态同步
         Anim.SetBool("defense", Pi.Defense);
+        
+        //7.跳跃触发：满足条件才可以跳跃
+        if (Pi.Jump && CheckState("ground"))
+        {
+            Anim.SetTrigger("jump");  
+        }
 
     }
 
@@ -113,18 +142,12 @@ public class ActorController : MonoBehaviour
     {
         //应用位置修正
         Rigid.position += DeltaPos;
-
-        //攻击时停止移动，否则正常移动
         if (Pi.Attack)
-        {
-            Rigid.velocity = new Vector3(0, 0, 0);//攻击时停止
-        }
-        else 
-        {
+            Rigid.velocity = new Vector3(0, 0, 0);
+        else
             Rigid.velocity = new Vector3(planVc.x, Rigid.velocity.y, planVc.z) + JumpImpulse;
-        }
-            
-        //用完冲量后清空，避免持续施加
+
+        
         JumpImpulse = Vector3.zero;
         DeltaPos = Vector3.zero; 
     }
@@ -132,10 +155,8 @@ public class ActorController : MonoBehaviour
     //==用来检测Animator的层级===
     public bool CheckState(string stateName, string layerName = "Base Layer")//（传进来的名字，名字是不是Base layer）
     {   //获取动画索引
-        int layerIndex = Anim.GetLayerIndex(layerName);
         //判断是否在指定动画状态
-        bool result = Anim.GetCurrentAnimatorStateInfo(layerIndex).IsName(stateName);
-        return result;
+        return Anim.GetCurrentAnimatorStateInfo(Anim.GetLayerIndex(layerName)).IsName(stateName);
     }
 
     //==进行输入源的选择方法==
@@ -158,26 +179,35 @@ public class ActorController : MonoBehaviour
     //跳跃进入：禁止输入、锁定移动、施加跳跃力
     public void OnJumpEnter()
     {
+        if (IsGround && !isJumping)
+        { 
+            Rigid.AddForce(new Vector3(0, JunmpHight, 0), ForceMode.Impulse);
+        }
+        isJumping = true;
         Pi.InputEnable = false;
         PlanLock = true;
-        JumpImpulse = new Vector3(0, JunmpHight, 0);
-        CanAttack = false;
+        canAttack = false;
     }
     //翻滚进入：禁用输入、锁定移动、施加翻滚力
     public void OnRollEnter()
     {
+        if (IsGround && !IsRolling)
+        {
+            Rigid.AddForce(new Vector3(0, RollHight, 0), ForceMode.Impulse);
+        }
+        IsRolling = true;
         Pi.InputEnable = false;
         PlanLock = true;
-        JumpImpulse = new Vector3(0, RollHight, 0);
-        CanAttack = false;
+        canAttack = false;
     }
     
     //后撤进入：禁用输入、所定移动
     public void OnJabEnter()
     {
+       
         Pi.InputEnable = false;
         PlanLock = true;
-        CanAttack = false;
+        canAttack = false;
     }
 
     //== 人物下落检测区 ==
@@ -196,10 +226,15 @@ public class ActorController : MonoBehaviour
     //进入地面状态：恢复输入、解锁移动、切换高摩擦
     public void OnGroundEnter()
     {
+        IsRolling = false;
+        isJumping = false;
+        IsJabbing = false;
         Pi.InputEnable = true;
         PlanLock = false;
-        CanAttack = true;
+        canAttack = true;
         Col.material = FrictionOne;
+        Anim.ResetTrigger("roll");
+
     }
 
     //离开地面状态：切换零摩擦
@@ -218,22 +253,34 @@ public class ActorController : MonoBehaviour
     //后撤步跟新：施加后退冲量
     public void OnJabUpdate()//这里是让后撤步的时候后退一点
     {
-        JumpImpulse = Model.transform.forward * Anim.GetFloat("jabVelocity") ;//这里不能使用newVector3(0, 0, -JabHight);因为这样不管你是面朝前还是面朝后。她永远只会往你Z轴的负坐标移动
-        //所以我们使用模型的方向
+        if (IsGround)//后撤步位移只在地面上施加，空中后撤不施加位移  
+        {
+            if (IsGround && !IsJabbing)
+            {
+                Rigid.AddForce(Model.transform.forward * Anim.GetFloat("jabVelocity") * JabVelocity, ForceMode.Impulse);
+            }
+            IsJabbing = true;
+        }
+
     }
 
     //攻击进入：禁止输入、锁定移动、设置动画层权重
     public void OnAttack1hAEnter()
     {
+        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), 1.0f);//直接切入攻击层.
         Pi.InputEnable = false;
-        PlanLock = true;
+        //PlanLock = true;
         TargetValue = 1.0f;//缓冲调整攻击的目标值
     }
 
     //攻击更新：施加攻击位移、平移动画层权重
     public void OnAttack1hAUpdate()//这里是让攻击的时候前进一点
     {
-        JumpImpulse = Model.transform.forward * Anim.GetFloat("attack1hAVelocity");//所以我们使用模型的方向
+        if (IsGround)//攻击位移只在地面上施加，空中攻击不施加位移
+        {
+            JumpImpulse = Model.transform.forward * Anim.GetFloat("attack1hAVelocity");
+        }
+        
         //       ===      接下来我们做缓冲调整attack层的权重      ====      
         float currentWeight = Anim.GetLayerWeight(Anim.GetLayerIndex("attack"));//获取当前的权重
         currentWeight = Mathf.Lerp(TargetValue, currentWeight, 0.5f);//缓冲
@@ -244,8 +291,9 @@ public class ActorController : MonoBehaviour
     //攻击待机进入：恢复输入、解锁移动
     public void OnAttackIdleEnter()
     {
+        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), 0.0f);//直接切入待机层.
         Pi.InputEnable = true;
-        PlanLock = false;
+        //PlanLock = false;
         TargetValue = 0.0f;
     }
 

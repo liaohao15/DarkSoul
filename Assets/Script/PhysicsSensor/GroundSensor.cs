@@ -27,7 +27,7 @@ public class GroundSensor : MonoBehaviour
 
     void FixedUpdate()
     {
-        //计算胶囊体的两个端点
+        //计算胶囊体的两个端点，然后一直更新
         Vector3 realCenter = transform.TransformPoint(CPC.center);
         Point1 = realCenter - transform.up * (CPC.height - Radius - Offset);
         Point2 = Point1 - transform.up * 0.2f;
