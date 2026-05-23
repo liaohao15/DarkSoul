@@ -12,7 +12,6 @@ public class ActorController : MonoBehaviour
     public GameObject Model;//抓取要控制的模型
     public BaseUserInput Pi;//输入系统基类
     public GameObject PlayerHandle;//角色手柄对象
-    public CameraController Camlock;//相机锁定控制器
 
     [Header("核心组件")]
     [SerializeField]
@@ -74,70 +73,21 @@ public class ActorController : MonoBehaviour
         // 推幅>0.8算跑步，否则走路
         RunTurn = moveInputMagnitude > 0.8f ? 2.0f : 1.0f;
 
-        if (Camlock.LockTarget == null)
-        {
-            //无锁敌时:沿用原始动画逻辑
-            Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));
-        }
-        else 
-        {
-            //锁敌状态：修复动画错位，只播放前后移动动画
-            Vector3 MoveDir = planVc.normalized;
-            //点积：判断移动方向和角色面朝方向的前后关系
-            float forwardComponent = Vector3.Dot(MoveDir, Model.transform.forward);
-            //取绝对值，后撤也播放走路动画
-            float forwardAnimValue = Mathf.Abs(forwardComponent) * RunTurn;
-            //平滑赋值动画参数
-            Anim.SetFloat("forward", Mathf.Lerp(Anim.GetFloat("forward"), forwardAnimValue, 0.3f));
-        }
-
+        Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));
+        
         //2.角色转向
-        if (Camlock.LockTarget == null)
+       
+        if (Pi.DL > 0.1f)
         {
-            // 无锁敌：按移动方向转向
-            if (Pi.DL > 0.1f)
-            {
-                //球面插值平滑转向
-                CharacterTurn = Vector3.Slerp(Model.transform.forward, Pi.DV, 0.5f);
-                Model.transform.forward = CharacterTurn;
-            }
-        }
-        else
-        {
-            // 锁敌：角色始终平滑面朝敌人
-            Vector3 TargetDir = Camlock.LockTarget.transform.position - Model.transform.position;
-            TargetDir.y = 0;
-            if (TargetDir.magnitude > 0.1f)
-            {
-                Model.transform.forward = Vector3.Slerp(Model.transform.forward, TargetDir, 0.5f);
-            }
+            //球面插值平滑转向
+            CharacterTurn = Vector3.Slerp(Model.transform.forward, Pi.DV, 0.5f);
+            Model.transform.forward = CharacterTurn;
         }
 
         //3.移动逻辑
         if (PlanLock == false)
         {
-            //无锁定目标：按移动方向转向
-            if (Camlock.LockTarget == null)
-            {
-                planVc = Pi.DL * Model.transform.forward * MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
-
-            }
-            //有锁定目标：相机朝向移动
-            else
-            {
-                //有锁定目标：以相机前后左右为移动方向
-                Vector3 CamForward = Camlock.Maincamera.transform.forward;
-                Vector3 CamRight = Camlock.Maincamera.transform.right;
-                CamForward.y = 0; CamForward.y = 0;//置平，忽略上下高度
-                CamRight.y = 0;
-                CamForward.Normalize();
-                CamRight.Normalize();
-
-                //摇杆输入映射相机方向
-                planVc = (CamForward * Pi.Dup + CamRight * Pi.Dturn).normalized;
-                //叠加速度和跑步倍率
-                planVc *= MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);
-            }
+            planVc = Pi.DL * Model.transform.forward * MovingSpeed * ((Pi.Run) ? RunMultiplier : 1.0f);//角色最终要移动的向量
         }
 
         //防滚触发：地面+按键 或者 高速移动时
@@ -156,11 +106,6 @@ public class ActorController : MonoBehaviour
         //防御动画：按键状态同步
         Anim.SetBool("defense", Pi.Defense);
 
-        //相机锁定/解锁：按键触发
-        if (Pi.LockOn)
-        {
-            Camlock.LockUnlock();
-        }
     }
 
     //用固定帧：处理刚体移动、物理逻辑
@@ -321,5 +266,10 @@ public class ActorController : MonoBehaviour
         {
             DeltaPos += (DeltaPos + (Vector3)_deltaPos)/2;
         }
+    }
+
+    public void cleanTrigger()
+    {
+        // 动画事件要求存在，但不需要做任何事
     }
 }

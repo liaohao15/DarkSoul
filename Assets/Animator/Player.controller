@@ -146,11 +146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac806e286061c4846a8002827dfff40c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearEnterSignals:
-  - jump
-  - roll
-  clearExitSignals:
-  - jump
+  ClearEnterSignals: []
+  ClearExitSignals: []
 --- !u!1102 &-6984206454282599964
 AnimatorState:
   serializedVersion: 6
@@ -218,9 +215,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac806e286061c4846a8002827dfff40c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearEnterSignals:
-  - attack
-  clearExitSignals: []
+  ClearEnterSignals: []
+  ClearExitSignals: []
 --- !u!1102 &-5818967788485791209
 AnimatorState:
   serializedVersion: 6
@@ -570,16 +566,16 @@ AnimatorStateMachine:
     m_Position: {x: 270, y: 120, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6380020717537668329}
-    m_Position: {x: 280, y: 30, z: 0}
+    m_Position: {x: 260, y: -100, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5755859115279007021}
-    m_Position: {x: 580, y: 30, z: 0}
+    m_Position: {x: 720, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6559151025091526335}
-    m_Position: {x: 570, y: 110, z: 0}
+    m_Position: {x: 470, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6137123077582547139}
-    m_Position: {x: 360, y: 200, z: 0}
+    m_Position: {x: 150, y: 230, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -869,7 +865,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -2627133763551835541}
-    m_Position: {x: 240, y: 120, z: 0}
+    m_Position: {x: 270, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6984206454282599964}
     m_Position: {x: 280, y: 40, z: 0}

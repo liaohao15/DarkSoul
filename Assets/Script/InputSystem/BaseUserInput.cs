@@ -32,19 +32,6 @@ public abstract class BaseUserInput : MonoBehaviour
     [Header("===  全局设置  ===")]
     public bool InputEnable = true;//通过判断InputEnable的值来控制玩家输入
 
-    [Header("===  相机控制输入  ===")]
-    public float Jup;//当前摄像机上下的输入值
-    public float Jright;//当前摄像机左右的输入值
-    public KeyCode KeyJup;
-    public KeyCode KeyJdown;
-    public KeyCode KeyJleft;
-    public KeyCode KeyJright;
-
-    [Header("===  （Mouse setting）鼠标设置  ===")]
-    public bool MouseEnable = true;
-    public float MouseSensitivityX = 1f;
-    public float MouseSensitivityY = 1f;
-
     [Header("=== 移动方向数据  === ")]
     public float DL;//(Direction Magnitude)方向模长
     public Vector3 DV;//(Direction Vector)方向向量
@@ -59,20 +46,5 @@ public abstract class BaseUserInput : MonoBehaviour
     }
     protected virtual void Update()
     {
-        // ==============         控制摄像机================
-        //鼠标控制相机
-        if (MouseEnable == true)
-        {
-            Jup = Input.GetAxis("Mouse Y") * MouseSensitivityY;
-            Jright = Input.GetAxis("Mouse X") * MouseSensitivityX;
-        }
-        //键盘按键控制相机
-        else
-        {
-            Jup = ((Input.GetKey(KeyJup) ? 1.0f : 0) - (Input.GetKey(KeyJdown) ? 1.0f : 0));
-            print(Jup);
-            Jright = ((Input.GetKey(KeyJright) ? 1.0f : 0) - (Input.GetKey(KeyJleft) ? 1.0f : 0));
-            print(Jright);
-        }
     }
 }
