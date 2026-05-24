@@ -472,7 +472,7 @@ ModelImporter:
       curves: []
       events:
       - time: 0.75355077
-        functionName: cleanTrigger
+        functionName: ResetTrigger
         data: attack
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

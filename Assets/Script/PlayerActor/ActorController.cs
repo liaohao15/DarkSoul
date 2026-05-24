@@ -80,15 +80,35 @@ public class ActorController : MonoBehaviour
         // 推幅>0.8算跑步，否则走路
         RunTurn = (Pi.Run || moveInputMagnitude > 1.0f) ? 2.0f : 1.0f;
 
-        Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.3f));
+        Anim.SetFloat("forward", Pi.DL * Mathf.Lerp(Anim.GetFloat("forward"), RunTurn, 0.8f));
         
         //2.角色转向
        
         if (Pi.DL > 0.1f && moveDirection != Vector3.zero)
         {
-            //球面插值平滑转向
-            CharacterTurn = Vector3.Slerp(Model.transform.forward,moveDirection, 0.5f);
-            Model.transform.forward = CharacterTurn;
+            ////球面插值平滑转向
+            //CharacterTurn = Vector3.Slerp(Model.transform.forward,moveDirection, 0.5f);
+            //Model.transform.forward = CharacterTurn;
+            // 获取当前朝向和目标朝向的欧拉角（Y轴）
+            float currentYaw = Model.transform.eulerAngles.y;
+            float targetYaw = Mathf.Atan2(moveDirection.x, moveDirection.z) * Mathf.Rad2Deg;
+
+            // 计算角度差（范围 -180 到 180）
+            float delta = Mathf.DeltaAngle(currentYaw, targetYaw);
+
+            // 当夹角正好为180度或接近180度时，强制顺时针旋转（即让 delta = 180）
+            if (Mathf.Abs(Mathf.Abs(delta) - 180f) < 0.01f)
+            {
+                delta = 180f;   // 顺时针旋转180度
+            }
+
+            // 设置每帧最大旋转速度（度/秒），例如每秒转270度，平滑转向
+            float rotateSpeed = 360f;
+            float maxStep = rotateSpeed * Time.deltaTime;
+            delta = Mathf.Clamp(delta, -maxStep, maxStep);
+
+            // 应用旋转
+            Model.transform.Rotate(0, delta, 0);
         }
 
         //3.移动逻辑
@@ -121,7 +141,7 @@ public class ActorController : MonoBehaviour
         }
 
         //5.攻击触发：满足所有条件才可以攻击
-        if (Pi.Attack && CheckState("ground") && canAttack )
+        if (Pi.Attack && CheckState("ground") )
         {
             Anim.SetTrigger("attack");
         }
@@ -267,7 +287,6 @@ public class ActorController : MonoBehaviour
     //攻击进入：禁止输入、锁定移动、设置动画层权重
     public void OnAttack1hAEnter()
     {
-        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), 1.0f);//直接切入攻击层.
         Pi.InputEnable = false;
         //PlanLock = true;
         TargetValue = 1.0f;//缓冲调整攻击的目标值
@@ -280,18 +299,18 @@ public class ActorController : MonoBehaviour
         {
             JumpImpulse = Model.transform.forward * Anim.GetFloat("attack1hAVelocity");
         }
-        
-        //       ===      接下来我们做缓冲调整attack层的权重      ====      
-        float currentWeight = Anim.GetLayerWeight(Anim.GetLayerIndex("attack"));//获取当前的权重
-        currentWeight = Mathf.Lerp(TargetValue, currentWeight, 0.5f);//缓冲
-        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), currentWeight);//更新
+
+        //       ===      接下来我们做缓冲调整attack层的权重      ====
+        int attackLayer = Anim.GetLayerIndex("attack");
+        float currentWeight = Anim.GetLayerWeight(attackLayer);//获取当前的权重
+        currentWeight = Mathf.Lerp(currentWeight, TargetValue, 0.3f);//缓冲
+        Anim.SetLayerWeight(attackLayer, currentWeight);//更新
         //UnityEngine.Debug.Log("Attack层权重：" + anim.GetLayerWeight(anim.GetLayerIndex("attack")));测试是否转入到攻击层次
     }
 
     //攻击待机进入：恢复输入、解锁移动
     public void OnAttackIdleEnter()
     {
-        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), 0.0f);//直接切入待机层.
         Pi.InputEnable = true;
         //PlanLock = false;
         TargetValue = 0.0f;
@@ -300,11 +319,11 @@ public class ActorController : MonoBehaviour
     //攻击待机更新：平滑动画层权重
     public void OnAttackIdleUpdate()
     {
-        JumpImpulse = Model.transform.forward * Anim.GetFloat("attack1hAVelocity");//所以我们使用模型的方向
-        //       ===      接下来我们做缓冲调整attack层的权重      ====      
-        float currentWeight = Anim.GetLayerWeight(Anim.GetLayerIndex("attack"));//获取当前的权重
-        currentWeight = Mathf.Lerp(TargetValue, currentWeight, 0.5f);//缓冲
-        Anim.SetLayerWeight(Anim.GetLayerIndex("attack"), currentWeight);//更新
+        //       ===      接下来我们做缓冲调整attack层的权重      ====     
+        int attackLayer = Anim.GetLayerIndex("attack"); 
+        float currentWeight = Anim.GetLayerWeight(attackLayer);//获取当前的权重
+        currentWeight = Mathf.Lerp(currentWeight, TargetValue, 0.3f);//缓冲
+        Anim.SetLayerWeight(attackLayer, currentWeight);//更新
     }
 
     //攻击位置修正：动画事件传递位移数据
@@ -314,10 +333,5 @@ public class ActorController : MonoBehaviour
         {
             DeltaPos += (DeltaPos + (Vector3)_deltaPos)/2;
         }
-    }
-
-    public void cleanTrigger()
-    {
-        // 动画事件要求存在，但不需要做任何事
     }
 }
